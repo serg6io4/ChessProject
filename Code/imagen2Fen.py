@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from detectarTableros import recortarTableros
 from recortarTablero import recortar
-from recortarfoto2 import recortarFoto
+from recortarFoto3 import recortarFoto
 def obtener_coordenadas(event, x, y, flags, param):
     #Para obtener las coordenadas haciendo click en las diferentes esquinas del tablero
     global contador_clics, coordenadas
