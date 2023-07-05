@@ -101,13 +101,12 @@ def recortarFoto(img, square_tam):
 
     #Si algún punto es nulo, intento rescatar el recorte con la complementación de dos puntos
     puntos_validos = [punto for punto in puntos if punto is not None ]
-    print(puntos_validos)
     recortada_original=None
 
     if len(puntos_validos)<=1:
         #Falta 3 o no hay puntos, no es recuperable
         print("No hay suficientes puntos")
-    elif len(puntos_validos)==2:
+    elif len(puntos_validos)>=2:
         #Faltan dos puntos, recuperable
 
         #Tengo el punto 1 y 4,  caso ideal

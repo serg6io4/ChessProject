@@ -69,7 +69,7 @@ def procesar_imagen(ruta_imagen):
     return imagen_transformada
 
 #Cargamos la ruta de la imagen y se la pasamos a procesar
-ruta_imagen = 'C:\\Users\\sergi\\Desktop\\ProyectoChess\\Pictures\\foto7.jpg'
+ruta_imagen = 'C:\\Users\\sergi\\Desktop\\ProyectoChess\\Pictures\\foto3.jpg'
 esFoto = True
 imagen_procesada = procesar_imagen(ruta_imagen)
 if esFoto:

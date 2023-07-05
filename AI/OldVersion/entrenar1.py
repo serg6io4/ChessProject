@@ -9,6 +9,44 @@ from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dropout, Flatten, Dense, Activation
 from tensorflow.python.keras.layers import  Convolution2D, MaxPooling2D
 from tensorflow.python.keras import backend as K
+from keras import applications
+
+"""
+#Ya he creado un modelo y ha sido un desastre debido a que es muy simple, así que indagando en Keras
+#Me he dado cuenta de que existe modelos preentrenados y pues lo he realizado
+vgg = applications.vgg16.VGG16()
+cnn = Sequential()
+#Lo copio en mi variable
+for capa in vgg.layers:
+    cnn.add(capa)
+
+cnn.pop()#Nos quitamos la clasificación de 1000 clases
+#Solo necesitamos 13 de ellas
+
+#Esto es para que no se cambie los pesos de las primeras capas
+#Debido a que ya están entrenadas
+for layers in cnn.layers:
+    layers.trainable=False
+
+#Añadimos esa capa que quitamos, pero ahora solo tiene que clasificar 13
+
+cnn.add(Dense(13, activation='softmax')) 
+"""
+
+
+#Creamos una función que se llama modelo, por limpieza
+def modelo():
+    vgg=applications.vgg16.VGG16()
+    cnn = Sequential()
+    for capa in vgg.layers:
+        cnn.add(capa)
+    for layers in cnn.layers:
+        layers.trainable=False
+    cnn.add(Flatten())
+    cnn.add(Dense(13, activation='softmax'))
+    
+    return cnn
+
 
 #Esto es para que no haya sesiones de Keras en background
 K.clear_session()
@@ -67,25 +105,13 @@ imagen_validacion = validacion_datagen.flow_from_directory(
     class_mode = 'categorical'
 )
 
-#Crear la red CNN
-
-cnn = Sequential()
-cnn.add(Convolution2D(filtrosConv1, tamano_filtro1, padding='same', input_shape=(altura, longitud,3),activation='relu'))
-cnn.add(MaxPooling2D(pool_size=tamano_pool))
-cnn.add(Convolution2D(filtrosConv2, tamano_filtro2, padding='same', activation='relu'))
-cnn.add(MaxPooling2D(pool_size=tamano_pool))
-#Imagen profunda a plana, que contiene toda la informacion de la cnn
-cnn.add(Flatten())
-#capa de neuronas de 256
-cnn.add(Dense(256, activation='relu'))
-#A esta capa densa voy a apagar neuronas para no sobreajustar
-cnn.add(Dropout(0.5))
-#Necesito que la imagen que le dieron que coja el máximo y será ese objeto
-cnn.add(Dense(clases, activation='softmax'))
+#Utilizamos la red VGG16
+cnn= modelo()
 
 #optimizar algoritmos
 optimizer = keras.optimizers.Adam(learning_rate=lr)
 cnn.compile(loss='categorical_crossentropy', optimizer= 'adam', metrics =['accuracy'])
+
 cnn.fit(
     imagen_entrenamiento,
     steps_per_epoch=pasos,
@@ -99,6 +125,9 @@ if not os.path.exists(dir):
     os.mkdir(dir)
 cnn.save('C:\\Users\\sergi\\Desktop\\ProyectoChess\\AI\\modelo\\modelo.h5')
 cnn.save_weights('C:\\Users\\sergi\\Desktop\\ProyectoChess\\AI\\modelo\\pesos.h5')
+
+
+
 
 
 
