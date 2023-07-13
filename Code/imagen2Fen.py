@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
-from detectarTableros import recortarTableros
 from recortarTablero import recortar
-from recortarFoto3 import recortarFoto
+from detectline import recortar_pre
+
 def obtener_coordenadas(event, x, y, flags, param):
     #Para obtener las coordenadas haciendo click en las diferentes esquinas del tablero
     global contador_clics, coordenadas
@@ -42,7 +42,7 @@ def procesar_imagen(ruta_imagen):
 
     # Cargar la imagen
     imagen = cv2.imread(ruta_imagen)
-    imagen = cv2.resize(imagen, (600, 600))
+    alto, ancho = imagen.shape[:2]
     # Variables para almacenar las coordenadas y el contador de clics
     coordenadas = []
     contador_clics = 0
@@ -65,21 +65,13 @@ def procesar_imagen(ruta_imagen):
         if cv2.waitKey(1) == 27:
             break
     #Realizamos la operación y devolvemos la imagen resultante
-    imagen_transformada = aplicar_transformacion(imagen, ordenar_puntos(coordenadas), 600, 600)
-    return imagen_transformada
+    coordenadas_ordenadas = ordenar_puntos(coordenadas)
+    imagen_transformada = aplicar_transformacion(imagen, coordenadas_ordenadas, alto, ancho)
+    return imagen_transformada, coordenadas_ordenadas
 
 #Cargamos la ruta de la imagen y se la pasamos a procesar
-ruta_imagen = 'C:\\Users\\sergi\\Desktop\\ProyectoChess\\Pictures\\foto3.jpg'
-esFoto = True
-imagen_procesada = procesar_imagen(ruta_imagen)
-if esFoto:
-    recortarFoto(imagen_procesada, 20)
-    #recortar(imagen_recortada)
-else:
-    imagen_recortada = recortarTableros(imagen_procesada)
-    recortar(imagen_recortada)
-
-
-
-
+ruta_imagen = 'C:\\Users\\sergi\\Desktop\\transform_images\\dataset\\chess-0002.png'
+imagen_procesada, coordenadas_ordenadas= procesar_imagen(ruta_imagen)
+recortar_pre(imagen_procesada, coordenadas_ordenadas)
+#recortar(imagen_recortada)
 
