@@ -35,7 +35,7 @@ def aplicar_transformacion(imagen, coordenadas, ancho, alto):
     matrix_transformacion = cv2.getPerspectiveTransform(puntos_origen, puntos_destino)
     # Aplico la transformación perspectiva a la imagen original
     imagen_transformada = cv2.warpPerspective(imagen, matrix_transformacion, (ancho, alto))
-    return imagen_transformada
+    return imagen_transformada, matrix_transformacion
 
 def procesar_imagen(ruta_imagen):
     global coordenadas, contador_clics
@@ -43,6 +43,7 @@ def procesar_imagen(ruta_imagen):
     # Cargar la imagen
     imagen = cv2.imread(ruta_imagen)
     alto, ancho = imagen.shape[:2]
+    
     # Variables para almacenar las coordenadas y el contador de clics
     coordenadas = []
     contador_clics = 0
@@ -66,12 +67,51 @@ def procesar_imagen(ruta_imagen):
             break
     #Realizamos la operación y devolvemos la imagen resultante
     coordenadas_ordenadas = ordenar_puntos(coordenadas)
-    imagen_transformada = aplicar_transformacion(imagen, coordenadas_ordenadas, alto, ancho)
-    return imagen_transformada, coordenadas_ordenadas
+    imagen_transformada, matrix_transformacion = aplicar_transformacion(imagen, coordenadas_ordenadas, alto, ancho)
+    return imagen_transformada, coordenadas_ordenadas, matrix_transformacion
+
+def calcular_coordenadas_finales(coordenadas_recortadas, ancho_original, alto_original, matriz_transformacion):
+    # Obtiene las dimensiones de la imagen recortada
+    ancho_recortado, alto_recortado = coordenadas_recortadas[1][0], coordenadas_recortadas[2][1]
+
+    # Calcula la escala en x e y (debido a que esto sería como el offset)
+    escala_x = ancho_original / ancho_recortado
+    escala_y = alto_original / alto_recortado
+
+    # Calcula las coordenadas finales en la imagen recortada(simplemente aplicamos la escala a los puntos obtenidos)
+    coordenadas_finales_recortadas = []
+    for punto in coordenadas_recortadas:
+        x = int(punto[0] * escala_x)
+        y = int(punto[1] * escala_y)
+        coordenadas_finales_recortadas.append((x, y))
+
+    # Aplica la transformación perspectiva inversa a las coordenadas recortadas(aplicamos la destransformacion)
+    coordenadas_finales_originales = []
+    for punto in coordenadas_finales_recortadas:
+        punto_homogeneo = np.array([[punto[0]], [punto[1]], [1]])
+        punto_transformado = np.dot(np.linalg.inv(matriz_transformacion), punto_homogeneo)
+        punto_transformado /= punto_transformado[2]
+        x = int(punto_transformado[0])
+        y = int(punto_transformado[1])
+        coordenadas_finales_originales.append((x, y))
+
+    return coordenadas_finales_originales
+
+
 
 #Cargamos la ruta de la imagen y se la pasamos a procesar
-ruta_imagen = 'C:\\Users\\sergi\\Desktop\\transform_images\\dataset\\chess-0002.png'
-imagen_procesada, coordenadas_ordenadas= procesar_imagen(ruta_imagen)
-recortar_pre(imagen_procesada, coordenadas_ordenadas)
-#recortar(imagen_recortada)
+ruta_imagen = 'C:\\Users\\sergi\\Desktop\\transform_images\\dataset\\chess-0010.png'
+#Obtengo la imagen del marco de seleccion, las coordenadas de ese marco y la matrix que se ha aplicado
+imagen_selec, coordenadas_originales, matrix= procesar_imagen(ruta_imagen)
+imagen_original = cv2.imread(ruta_imagen)
+alto, ancho = imagen_original.shape[:2]#Lo necesito para sacar las coordenadas originales
+imagen_pre, coordenadas_puntos= recortar_pre(imagen_selec)
+if(imagen_pre is not None):
+    #Se le tiene que pasar las coordenadas obtenidas, el alto y el ancho de la imagen original y la matrix de transformacion
+    print(calcular_coordenadas_finales(coordenadas_puntos,alto, ancho, matrix))
+    cv2.imshow("Previsualizacion", imagen_pre)
+    cv2.waitKey(0)
+    #recortar(imagen_n)
+else:
+    print("Vuelva a intentarlo")
 

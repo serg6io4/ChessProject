@@ -62,12 +62,10 @@ def lineas(canny_image, original_image, rho=1, theta=np.pi/360, threshold=200):
 
     # Dibujar los puntos de intersección
     for punto in puntos_interseccion:
-        cv2.circle(line_image, punto, 5, (255, 0, 0), -1)
+        cv2.circle(line_image, punto, 4, (255, 0, 0), -1)
 
-    cv2.imshow("Líneas detectadas", line_image)
+    cv2.imshow("Lineas", line_image)
     cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
     return line_image, puntos_interseccion
 
 def punto_esquina(x, y, puntos_interseccion, esquina_x, esquina_y):
@@ -87,19 +85,20 @@ def punto_esquina(x, y, puntos_interseccion, esquina_x, esquina_y):
 
     return mejor_punto
 
-
-def recortar_pre(imagen, coordenadas):
+#Para recortar el tablero de forma precisa
+def recortar_pre(imagen):
     Canny = canny(imagen)
-    cv2.imshow("C", Canny)
-    cv2.waitKey(0)
+    #cv2.imshow("C", Canny)
+    #cv2.waitKey(0)
     alto_imagen, ancho_imagen = imagen.shape[:2]
     #No cogemos lineas, por el simple hecho que las lineas el medio para obtener los puntos
     lines, puntos = lineas(Canny,imagen)
-    punto1 = punto_esquina(0, 0, puntos, 40, 40)
-    punto2 = punto_esquina(ancho_imagen - 40, 0, puntos, 40, 40)
-    punto3 = punto_esquina(0, alto_imagen - 40, puntos, 40, 40)
-    punto4 = punto_esquina(ancho_imagen - 40, alto_imagen - 40, puntos, 40, 40)
-
+    cuadrado_tam=40
+    punto1 = punto_esquina(0, 0, puntos, cuadrado_tam, cuadrado_tam)
+    punto2 = punto_esquina(ancho_imagen - cuadrado_tam, 0, puntos, cuadrado_tam, cuadrado_tam)
+    punto3 = punto_esquina(0, alto_imagen - cuadrado_tam, puntos, cuadrado_tam, cuadrado_tam)
+    punto4 = punto_esquina(ancho_imagen - cuadrado_tam, alto_imagen - cuadrado_tam, puntos, cuadrado_tam, cuadrado_tam)
+    
     #Debido a que no siempre va a estar el punto 1 y el 4, tenemos que realizar un sistema el cual pueda recrear los puntos faltantes
     #Para ello será necesario, realizar operaciones con los sistemas de coordenadas con los puntos que tenemos
     puntos = []
@@ -108,25 +107,39 @@ def recortar_pre(imagen, coordenadas):
     puntos_validos = [punto for punto in puntos if punto is not None ]
     imagen_n = None
 
-    if len(puntos_validos<=1):
+    if len(puntos_validos)<=1:
         print("No hay suficientes puntos para detectar el tablero")
-    elif len(puntos_validos>2):
-        if(punto1!=None & punto4!=None):
+    elif len(puntos_validos)>=2:
+        if((punto1 is not None) & (punto4 is not None)):
             #Realmente solo importa a la hora de recortar estas dos coordenadas
             imagen_n = imagen[punto1[1]:punto4[1], punto1[0]:punto4[0]]
-        elif(punto1!=None & punto4==None):
-            #3 Casos posibles:
-            #Tenemos (1,2), (1,3), (1,2,3)
-            print(" A Completar")
-        elif(punto1==None & punto4 != None):
-            #3 Casos posibles:
-            #Tenemos (2,4), (3,4), (2,3,4)
-            print(" A Completar")
-        
 
-    cv2.imshow("Previsualizacion", imagen_n)
-    cv2.waitKey(0)
-    return imagen
+        elif((punto1 is not None) & (punto4 is None)):
+            #3 Casos posibles:
+            #Tenemos (1,2,3) (1,2), (1,3)
+            if((punto2 is not None) & (punto3 is not None)):
+                imagen_n = imagen[punto1[1]:punto3[1], punto1[0]:punto2[0]]
+            elif(punto2 is not None):
+                imagen_n = imagen[punto1[1]:alto_imagen-punto2[1], punto1[0]:punto2[0]]
+            else:
+                imagen_n = imagen[punto1[1]:punto3[1], punto1[0]:alto_imagen-punto1[0]]
+
+        elif((punto1 is None) & (punto4 is not None)):
+            #3 Casos posibles:
+            #Tenemos (2,3,4), (2,4), (3,4)
+            if((punto2 is not None) & (punto3 is not None)):
+                imagen_n = imagen[punto2[1]:punto4[1], punto3[0]:punto4[0]]
+            elif(punto2 is not None):
+                imagen_n = imagen[punto2[1]:punto4[1], ancho_imagen-punto2[0]:punto4[0]]
+            else:
+                imagen_n = imagen[alto_imagen-punto3[1]:punto4[1], punto3[0]:punto4[0]]
+        else:
+            #Ni el punto 1 ni el 4, solo tengo 2 y 3
+            imagen_n = imagen[punto2[1]:punto3[1], punto3[0]:punto2[0]]
+            
+   #Esta absurdez es por que necesito implementar la recomposición de alguno de los puntos, en caso de no ser detectados
+    coordenadas_puntos = puntos
+    return imagen_n, coordenadas_puntos
 
 
 
