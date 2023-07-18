@@ -4,6 +4,12 @@ from recortarTablero import recortar
 from detectline import recortar_pre
 
 def obtener_coordenadas(event, x, y, flags, param):
+    """
+    Obtención de coordenadas, por evento de mouse
+
+    :param:  Evento, posiciones(x,y), Flags y Parámetro
+    :return: *se almacena en una varible global las coordenadas*
+    """
     #Para obtener las coordenadas haciendo click en las diferentes esquinas del tablero
     global contador_clics, coordenadas
     if event == cv2.EVENT_LBUTTONDOWN:
@@ -13,6 +19,12 @@ def obtener_coordenadas(event, x, y, flags, param):
             cv2.destroyWindow('Imagen')
 
 def ordenar_puntos(puntos):
+    """
+    Agarra una lista de puntos y los devuelve ordenados
+
+    :param:  Coordenadas desordenadas
+    :return: Lista de coordenadas ordenadas(esi, esd, eai, ead)
+    """
     #Esto es para ordenar los puntos(aunque de una manera bruta)
     puntos = np.array(puntos, dtype=np.float32)
     suma_puntos = puntos.sum(axis=1)
@@ -27,6 +39,12 @@ def ordenar_puntos(puntos):
     return puntos_ordenados
 
 def aplicar_transformacion(imagen, coordenadas, ancho, alto):
+    """
+    Aplica una transformacion perspectiva
+
+    :param:  Imagen a transformar, coordenadas de la sección a trasnformar, dimensiones de la imagen
+    :return: Imagen transformada(plana), matrix de transformacion aplicada 
+    """
     #Obtengo los puntos de coordenadas de la imagen que he seleccionado
     puntos_origen = ordenar_puntos(coordenadas)
     # Defino las coordenadas de destino para la transformación
@@ -38,6 +56,13 @@ def aplicar_transformacion(imagen, coordenadas, ancho, alto):
     return imagen_transformada, matrix_transformacion
 
 def procesar_imagen(ruta_imagen):
+    """
+    Aplica un transformación perspectiva a la imagen
+
+    :param:  Ruta de la imagen
+    :return: Devuelve imagen transformada(plana), coordenadas de la seleccion de la transformación
+             matrix aplicada para la transformación 
+    """
     global coordenadas, contador_clics
 
     # Cargar la imagen
@@ -71,21 +96,27 @@ def procesar_imagen(ruta_imagen):
     return imagen_transformada, coordenadas_ordenadas, matrix_transformacion
 
 def calcular_coordenadas_finales(coordenadas_recortadas, ancho_original, alto_original, matriz_transformacion):
-    # Obtiene las dimensiones de la imagen recortada
+    """
+    Obtener las coordenadas en la imagen original de las coordenadas recortadas en una transformacion concreta
+
+    :param: Coordenadas de la imagen transformada, tamaño original de la imagen(ancho y alto), matriz aplicada en dicha transformacion previa
+    :return: Coordenadas en la imagen original
+    """
+    # Obtengo las dimensiones de la imagen recortada(se que es un poco cortar por lo sano)
     ancho_recortado, alto_recortado = coordenadas_recortadas[1][0], coordenadas_recortadas[2][1]
 
-    # Calcula la escala en x e y (debido a que esto sería como el offset)
+    # Calculo la escala en x e y (debido a que esto sería como el offset)
     escala_x = ancho_original / ancho_recortado
     escala_y = alto_original / alto_recortado
 
-    # Calcula las coordenadas finales en la imagen recortada(simplemente aplicamos la escala a los puntos obtenidos)
+    # Calculo las coordenadas finales en la imagen recortada(simplemente aplicamos la escala a los puntos obtenidos)
     coordenadas_finales_recortadas = []
     for punto in coordenadas_recortadas:
         x = int(punto[0] * escala_x)
         y = int(punto[1] * escala_y)
         coordenadas_finales_recortadas.append((x, y))
 
-    # Aplica la transformación perspectiva inversa a las coordenadas recortadas(aplicamos la destransformacion)
+    # Aplico la transformación perspectiva inversa a las coordenadas recortadas(aplicamos la destransformacion)
     coordenadas_finales_originales = []
     for punto in coordenadas_finales_recortadas:
         punto_homogeneo = np.array([[punto[0]], [punto[1]], [1]])
@@ -94,7 +125,7 @@ def calcular_coordenadas_finales(coordenadas_recortadas, ancho_original, alto_or
         x = int(punto_transformado[0])
         y = int(punto_transformado[1])
         coordenadas_finales_originales.append((x, y))
-
+    #No es preciso 100 pero es un calculo muy cercano a lo que se obtiene
     return coordenadas_finales_originales
 
 

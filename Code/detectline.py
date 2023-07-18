@@ -2,7 +2,12 @@ import numpy as np
 import cv2
 
 def canny(image):
-    #Cambio temático e implemento un detector de Canny con umbrales automáticos
+    """
+    Aplicación de detección de bordes por algoritmo Canny(umbrales automáticos)
+
+    :param:  imagen 
+    :return: imagen con bordes detectados
+    """
     sigma = 0.25
     v = np.median(image)
     img = cv2.medianBlur(image, 3)
@@ -13,6 +18,13 @@ def canny(image):
     return cv2.Canny(img, lower, upper)
 
 def lineas(canny_image, original_image, rho=1, theta=np.pi/360, threshold=200):
+    """
+    Búsqueda de las líneas de la imagen con bordes detectados, 
+    Búsqueda de puntos de intersecciones entre líneas
+
+    :param:  imagen con bordes detectados, imagen original, rho, theta, umbral
+    :return: Una lista de los puntos de intersección entre las líneas
+    """
     # Aplicar la transformada de Hough a la imagen Canny
     lines = cv2.HoughLines(canny_image, rho, theta, threshold)
 
@@ -64,12 +76,18 @@ def lineas(canny_image, original_image, rho=1, theta=np.pi/360, threshold=200):
     for punto in puntos_interseccion:
         cv2.circle(line_image, punto, 4, (255, 0, 0), -1)
 
-    cv2.imshow("Lineas", line_image)
+    cv2.imshow("Lineas y puntos de intersección", line_image)
     cv2.waitKey(0)
-    return line_image, puntos_interseccion
+    return puntos_interseccion
 
 def punto_esquina(x, y, puntos_interseccion, esquina_x, esquina_y):
+    """
+    Búsqueda del punto más céntrico encontrado de una lista de puntos sobre
+    una zona concreta 
 
+    :param:  Las posiciones de las esquinas de la imagen, la lista de puntos, el tamaño de la zona en x e y
+    :return: Punto más céntrico en la zona delimitada
+    """
     mejor_punto = None
     mejor_distancia = float('inf')
 
@@ -87,12 +105,18 @@ def punto_esquina(x, y, puntos_interseccion, esquina_x, esquina_y):
 
 #Para recortar el tablero de forma precisa
 def recortar_pre(imagen):
+    """
+    Recortar la zona detectada de una imagen pasada, aplicando las funciones anteriores
+
+    :param:  Una imagen
+    :return: Una imagen tratada
+    """
     Canny = canny(imagen)
     #cv2.imshow("C", Canny)
     #cv2.waitKey(0)
     alto_imagen, ancho_imagen = imagen.shape[:2]
     #No cogemos lineas, por el simple hecho que las lineas el medio para obtener los puntos
-    lines, puntos = lineas(Canny,imagen)
+    puntos = lineas(Canny,imagen)
     cuadrado_tam=40
     punto1 = punto_esquina(0, 0, puntos, cuadrado_tam, cuadrado_tam)
     punto2 = punto_esquina(ancho_imagen - cuadrado_tam, 0, puntos, cuadrado_tam, cuadrado_tam)

@@ -1,6 +1,12 @@
 import cv2
 
 def recortar(imagen):
+    """
+    Obtención de las casilas establecidas por el ancho y alto de una imagen
+
+    :param:  Imagen
+    :return: Casillas recortadas de la imagen original
+    """
     # Cargar la imagen del tablero de ajedrez
     imagen_tablero = imagen
 
