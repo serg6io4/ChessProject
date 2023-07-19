@@ -1,17 +1,15 @@
 import cv2
+import numpy as np
 
 def recortar(imagen):
     """
-    Obtención de las casilas establecidas por el ancho y alto de una imagen
+    Obtención de las casillas establecidas por el ancho y alto de una imagen
 
-    :param:  Imagen
-    :return: Casillas recortadas de la imagen original
+    :param imagen: Imagen del tablero de ajedrez
+    :return: Array de imágenes representando las casillas del tablero(0-63)
     """
-    # Cargar la imagen del tablero de ajedrez
-    imagen_tablero = imagen
-
     # Obtener las dimensiones de la imagen
-    ancho, alto = imagen_tablero.shape[:2]
+    ancho, alto = imagen.shape[:2]
 
     # Calcular el tamaño de cada casilla (dividir entre 8, ya que el tablero tiene que ser casi perfecto linealmente)
     tamaño_casilla_x = ancho // 8
@@ -20,7 +18,7 @@ def recortar(imagen):
     tamaño_casilla_x = int(tamaño_casilla_x)
     tamaño_casilla_y = int(tamaño_casilla_y)
 
-    contador = 1  # Para mantener un orden numérico en los nombres de archivo
+    casillas_array = []  # Lista para almacenar las casillas (imágenes)
 
     for fila in range(8):
         for columna in range(8):
@@ -31,13 +29,13 @@ def recortar(imagen):
             y2 = y1 + tamaño_casilla_y
 
             # Aquí recorto la casilla del punto actual
-            casilla = imagen_tablero[y1:y2, x1:x2]
-            
-            # Los va a ir poniendo de uno en uno desde arriba hasta abajo
-            nombre_archivo = f'{contador}.jpg'
-            contador += 1
+            casilla = imagen[y1:y2, x1:x2]
 
-            # Guardo la casilla como una imagen separada
-            cv2.imwrite(nombre_archivo, casilla)
+            # Agrego la casilla a la lista de imágenes
+            casillas_array.append(casilla)
 
-#recortar(cv2.imread("C:\\Users\\sergi\\Desktop\\ProyectoChess\\Pictures\\tablero.jpg"))
+    # Convertir la lista de imágenes en un array de NumPy
+    casillas_array = np.array(casillas_array)
+
+    return casillas_array
+

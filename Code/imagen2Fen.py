@@ -128,21 +128,47 @@ def calcular_coordenadas_finales(coordenadas_recortadas, ancho_original, alto_or
     #No es preciso 100 pero es un calculo muy cercano a lo que se obtiene
     return coordenadas_finales_originales
 
+def coordenadas_txt(coordenadas, ruta):
+    """
+    Guardar en un txt los puntos extraidos de la imagen
 
+    :param:  Coordenadas extraidas, ruta de la imagen
+    :return: "Guardará un txt, con el nombre de la ruta de la imagen más -prediction, con las coordenadas"
+    """
+    coordenadas_nuevas = [coordenadas[0], coordenadas[2], coordenadas[3], coordenadas[1]]
+    # Convertir las coordenadas en una cadena con el formato "x y"
+    coordenadas_str = " ".join([f"{x} {y}" for x, y in coordenadas_nuevas])
+
+    # Guardar las coordenadas en un archivo de texto
+    nombre_archivo = ruta + "-prediction.txt"
+    with open(nombre_archivo, "w") as archivo:
+        archivo.write(coordenadas_str)
+
+    print(f"Se han guardado las coordenadas en el archivo: {nombre_archivo}")
+
+##################################
+#    Realización del programa    #
+##################################
 
 #Cargamos la ruta de la imagen y se la pasamos a procesar
-ruta_imagen = 'C:\\Users\\sergi\\Desktop\\transform_images\\dataset\\chess-0010.png'
+ruta_carpeta = "C:\\Users\\sergi\\Desktop\\transform_images\\dataset\\"
+ruta_imagen = "chess-0010"
+
 #Obtengo la imagen del marco de seleccion, las coordenadas de ese marco y la matrix que se ha aplicado
-imagen_selec, coordenadas_originales, matrix= procesar_imagen(ruta_imagen)
-imagen_original = cv2.imread(ruta_imagen)
-alto, ancho = imagen_original.shape[:2]#Lo necesito para sacar las coordenadas originales
+imagen_selec, coordenadas_originales, matrix= procesar_imagen(ruta_carpeta + ruta_imagen + ".png")
+#Lo hago para obtener las medidas, se necesitarán para destransformar la perspectiva inicial
+imagen_original = cv2.imread(ruta_carpeta + ruta_imagen + ".png")
+alto, ancho = imagen_original.shape[:2]
+#Recorto la imagen seleccionada
 imagen_pre, coordenadas_puntos= recortar_pre(imagen_selec)
 if(imagen_pre is not None):
     #Se le tiene que pasar las coordenadas obtenidas, el alto y el ancho de la imagen original y la matrix de transformacion
-    print(calcular_coordenadas_finales(coordenadas_puntos,alto, ancho, matrix))
+    coordenadas_reales = calcular_coordenadas_finales(coordenadas_puntos,alto, ancho, matrix)
+    coordenadas_txt(coordenadas_reales, (ruta_carpeta + ruta_imagen))
     cv2.imshow("Previsualizacion", imagen_pre)
     cv2.waitKey(0)
     #recortar(imagen_n)
 else:
-    print("Vuelva a intentarlo")
+    #Imagen nula, error
+    print("Vuelva a intentarlo, ha ocurrido un error en la deteccion del tablero")
 
