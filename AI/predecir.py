@@ -45,5 +45,5 @@ def predict(file):
         print("RW")
     
 
-predict('C:\\Users\\sergi\\Desktop\\ProyectoChess\\57.jpg')
+predict('C:\\Users\\sergi\Desktop\\ProyectoChess\\reina negra.jpg')
 
