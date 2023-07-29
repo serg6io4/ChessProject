@@ -11,8 +11,14 @@ import tensorflow as tf
 from PIL import Image
 from shapely.geometry import Polygon #Esto es para IOU
 
-### IoU !!!!!!!!!!!!!!!!!!
+
 def poligono(ruta_txt):
+   """
+    Busca las coordenadas de un txt y transforma esas coordenadas a un poligono
+
+    :param:  ruta con coordenadas
+    :return: poligono
+    """
    with open(ruta_txt, 'r') as gt_f:
     gt_array = gt_f.readlines()
     gt_array = [x.split() for x in gt_array]
@@ -29,6 +35,12 @@ def poligono(ruta_txt):
     return Poligono
 
 def IOU (Poligono1, Poligono2):
+    """
+    Compara el area de dos polígonos, realizando las uniones e intersecciones entre ambos.
+
+    :param:  poligonos
+    :return: Porcentaje aproximado de similitud
+    """
     polygon1 = Poligono1
     polygon2 = Poligono2
     intersect = polygon1.intersection(polygon2).area
@@ -36,7 +48,8 @@ def IOU (Poligono1, Poligono2):
     iou = intersect / union
     return iou
 
-ruta1 = "C:\\Users\\sergi\\Desktop\\ProyectoChess\\transform_images\\dataset\\playchess-0002-1690459644412.txt"
-ruta2 = "C:\\Users\\sergi\\Desktop\\ProyectoChess\\transform_images\\dataset\\playchess-0002-1690459644412-colorgaussian-prediction.txt"
-print(IOU(poligono(ruta1), poligono(ruta2)))
+#Parte de la fase de testeo
+#ruta1 = "C:\\Users\\sergi\\Desktop\\ProyectoChess\\transform_images\\dataset\\playchess-0002-1690459644412.txt"
+#ruta2 = "C:\\Users\\sergi\\Desktop\\ProyectoChess\\transform_images\\dataset\\playchess-0002-1690459644412-colorgaussian-prediction.txt"
+#print(IOU(poligono(ruta1), poligono(ruta2)))
 
