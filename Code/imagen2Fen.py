@@ -151,8 +151,8 @@ def coordenadas_txt(coordenadas, ruta):
 ##################################
 
 #Cargamos la ruta de la imagen y se la pasamos a procesar
-ruta_carpeta = "C:\\Users\\sergi\\Desktop\\transform_images\\dataset\\"
-ruta_imagen = "lichess-0002-1690631872666-colorgaussian"
+ruta_carpeta = "C:\\Users\\sergi\\Desktop\\ProyectoChess\\transform_images\\dataset\\"
+ruta_imagen = "playchess-0002-1690459644412-colorgaussian"
 
 #Obtengo la imagen del marco de seleccion, las coordenadas de ese marco y la matrix que se ha aplicado
 imagen_selec, coordenadas_originales, matrix= procesar_imagen(ruta_carpeta + ruta_imagen + ".png")

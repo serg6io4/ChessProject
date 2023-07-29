@@ -36,7 +36,7 @@ def IOU (Poligono1, Poligono2):
     iou = intersect / union
     return iou
 
-ruta1 = "C:\\Users\\sergi\\Desktop\\transform_images\\dataset\\playchess-0010.txt"
-ruta2 = "C:\\Users\\sergi\\Desktop\\transform_images\\dataset\\playchess-0010-prediction.txt"
+ruta1 = "C:\\Users\\sergi\\Desktop\\ProyectoChess\\transform_images\\dataset\\playchess-0002-1690459644412.txt"
+ruta2 = "C:\\Users\\sergi\\Desktop\\ProyectoChess\\transform_images\\dataset\\playchess-0002-1690459644412-colorgaussian-prediction.txt"
 print(IOU(poligono(ruta1), poligono(ruta2)))
 
