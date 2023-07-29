@@ -17,7 +17,7 @@ def canny(image):
 
     return cv2.Canny(img, lower, upper)
 
-def lineas(canny_image, original_image, rho=1, theta=np.pi/360, threshold=200):
+def lineas(canny_image, original_image, rho=1, theta=np.pi/360, threshold=180):
     """
     Búsqueda de las líneas de la imagen con bordes detectados, 
     Búsqueda de puntos de intersecciones entre líneas
@@ -69,7 +69,7 @@ def lineas(canny_image, original_image, rho=1, theta=np.pi/360, threshold=200):
             y1 = int(y0 + 1000 * (a))
             x2 = int(x0 - 1000 * (-b))
             y2 = int(y0 - 1000 * (a))
-            cv2.line(line_image, (x1, y1), (x2, y2), (0, 255, 0), 3)
+            cv2.line(line_image, (x1, y1), (x2, y2), (0, 255, 0), 2)
     
 
     # Dibujar los puntos de intersección
@@ -170,6 +170,8 @@ def recortar_pre(imagen):
 
     #Realizamos Canny para detección de bordes dentro de la imagen que nos pasan
     Canny = canny(imagen)
+    cv2.imshow("c", Canny)
+    cv2.waitKey(0)
     #Lo necesitaremos para recuperar las coordenadas que nos falten a posteriori de detectar los puntos
     alto_imagen, ancho_imagen = imagen.shape[:2]
     #Obtenemos los puntos

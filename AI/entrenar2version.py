@@ -19,14 +19,14 @@ data_validacion = 'C:\\Users\\sergi\\Desktop\\ProyectoChess\\AI\\data\\Validacio
 
 #Parámetros:
 #Numero de veces de interaccion sobre el set de datos
-epocas=12
+epocas=10
 #Tamaño para procesar las imagenes
 altura, longitud =100, 100
 #Números de imagenes que le pasamos al pc a procesar en cada paso
-batch_size = 32
+batch_size = 64
 #El numero de pasos por época
-pasos = 800
-pasos_validacion = 200
+pasos = 1000
+pasos_validacion = 400
 #Ajustar profundidades, la primera y la segunda
 filtrosConv1 = 32
 filtrosConv2 = 64
@@ -73,12 +73,16 @@ cnn = Sequential()
 cnn.add(Convolution2D(filtrosConv1, tamano_filtro1, padding='same', input_shape=(altura, longitud,3),activation='relu'))
 cnn.add(MaxPooling2D(pool_size=tamano_pool))
 cnn.add(Convolution2D(filtrosConv2, tamano_filtro1, padding='same', input_shape=(altura, longitud,3),activation='relu'))
+cnn.add(Convolution2D(filtrosConv2, tamano_filtro1, padding='same', input_shape=(altura, longitud,3),activation='relu'))
 cnn.add(MaxPooling2D(pool_size=tamano_pool))
 cnn.add(Convolution2D(filtrosConv3, tamano_filtro1, padding='same', activation='relu'))
 cnn.add(MaxPooling2D(pool_size=tamano_pool))
 #Imagen profunda a plana, que contiene toda la informacion de la cnn
 cnn.add(Flatten())
 #capa de neuronas de 256
+cnn.add(Dense(128, activation='relu'))
+#A esta capa densa voy a apagar neuronas para no sobreajustar
+cnn.add(Dropout(0.5))
 cnn.add(Dense(128, activation='relu'))
 #A esta capa densa voy a apagar neuronas para no sobreajustar
 cnn.add(Dropout(0.5))
