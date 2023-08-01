@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from predecir2version import predecir
 
 def recortar(imagen):
     """
@@ -9,6 +10,7 @@ def recortar(imagen):
     :return: Array de imágenes representando las casillas del tablero(0-63)
     """
     # Obtener las dimensiones de la imagen
+    fenNotation = []
     ancho, alto = imagen.shape[:2]
 
     # Calcular el tamaño de cada casilla (dividir entre 8, ya que el tablero tiene que ser casi perfecto linealmente)
@@ -30,12 +32,7 @@ def recortar(imagen):
 
             # Aquí recorto la casilla del punto actual
             casilla = imagen[y1:y2, x1:x2]
+            fenNotation.append(predecir(casilla))
 
-            # Agrego la casilla a la lista de imágenes
-            casillas_array.append(casilla)
-
-    # Convertir la lista de imágenes en un array de NumPy
-    casillas_array = np.array(casillas_array)
-
-    return casillas_array
+    return fenNotation
 

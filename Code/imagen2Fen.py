@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
-from recortarTablero import recortar
 from detectline import recortar_pre
+from predecir2version import cargar_modelo,recortar,predecir
 
 def obtener_coordenadas(event, x, y, flags, param):
     """
@@ -152,7 +152,7 @@ def coordenadas_txt(coordenadas, ruta):
 
 #Cargamos la ruta de la imagen y se la pasamos a procesar
 ruta_carpeta = "C:\\Users\\sergi\\Desktop\\ProyectoChess\\transform_images\\dataset\\"
-ruta_imagen = "playchess-0002-1690459644412-colorgaussian"
+ruta_imagen = "chess-0002"
 
 #Obtengo la imagen del marco de seleccion, las coordenadas de ese marco y la matrix que se ha aplicado
 imagen_selec, coordenadas_originales, matrix= procesar_imagen(ruta_carpeta + ruta_imagen + ".png")
@@ -162,12 +162,26 @@ alto, ancho = imagen_original.shape[:2]
 #Recorto la imagen seleccionada
 imagen_pre, coordenadas_puntos= recortar_pre(imagen_selec)
 if(imagen_pre is not None):
+    """
+    Está comentado debido a que se utilizó para el testeo del algoritmo de detección
     #Se le tiene que pasar las coordenadas obtenidas, el alto y el ancho de la imagen original y la matrix de transformacion
     coordenadas_reales = calcular_coordenadas_finales(coordenadas_puntos,alto, ancho, matrix)
     coordenadas_txt(coordenadas_reales, (ruta_carpeta + ruta_imagen))
+    """
     cv2.imshow("Previsualizacion", imagen_pre)
     cv2.waitKey(0)
-    #recortar(imagen_n)
+    #Esto es para que la imagen sea cuadrada exacta y se lo paso
+    imagen_pre = cv2.resize(imagen_pre, (600,600))
+    #Cargo el modelo dentro de una variable
+    ruta_modelo = "C:\\Users\\sergi\\Desktop\\ProyectoChess\\AI\\modelo\\mobilenetv2_chess_classification.pt"
+    modelo = cargar_modelo(ruta_modelo)
+
+    # LLamo a la función recortar para recortar el tablero y escribirlo en notación FEN
+    fenNotation = recortar(imagen_pre, modelo)
+    #La devuelvo por pantalla
+    print(fenNotation)
+
+
 else:
     #Imagen nula, error
     print("Vuelva a intentarlo, ha ocurrido un error en la deteccion del tablero")
