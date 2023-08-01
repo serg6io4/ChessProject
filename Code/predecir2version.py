@@ -60,31 +60,31 @@ def dividir_cada_ocho(string):
     """
     return '/'.join(string[i:i+8] for i in range(0, len(string), 8))
 
-def convertir_fen_modificado_a_estandar(fen_modificado):
+def convertir_a_FEN(tablero):
     """
-    Convierte un string FEN modificado a notación FEN estándar.
+    Obtiene una versión sin rectificar de la notación FEN y lo rectifica
 
-    :param fen_modificado: String FEN modificado
-    :return: String FEN estándar
+    :param string: String a rectificar
+    :return: String rectificado con la notación FEN
     """
-    fen_estandar = ""
-    contador_vacios = 0
-
-    for caracter in fen_modificado:
-        if caracter.isdigit():
-            contador_vacios = contador_vacios * 10 + int(caracter)
-        else:
-            if contador_vacios == 0:
-                fen_estandar += caracter
+    tablero = tablero.split('/')
+    nueva_FEN = ''
+    for fila in tablero:
+        nueva_fila = ''
+        count = 0
+        for c in fila:
+            if c.isdigit():
+                count += int(c)
             else:
-                fen_estandar += str(contador_vacios)
-                contador_vacios = 0
-                fen_estandar += caracter
-
-    if contador_vacios > 0:
-        fen_estandar += str(contador_vacios)
-
-    return fen_estandar
+                if count > 0:
+                    nueva_fila += str(count)
+                    count = 0
+                nueva_fila += c
+        if count > 0:
+            nueva_fila += str(count)
+        nueva_FEN += nueva_fila + '/'
+    nueva_FEN = nueva_FEN[:-1]  # Eliminar la última barra '/'
+    return nueva_FEN
 
 
 def recortar(imagen, modelo):
@@ -123,9 +123,29 @@ def recortar(imagen, modelo):
             fenNotation = fenNotation + clase_predicha
 
     fenNotation = dividir_cada_ocho(fenNotation)
-    fenNotation = convertir_fen_modificado_a_estandar(fenNotation)
+    fenNotation = convertir_a_FEN(fenNotation)
     return fenNotation
 
+
+def sumar_1_entre_piezas(cadena):
+    resultado = ""
+    suma_temporal = 0
+
+    for caracter in cadena:
+        if caracter.isdigit():
+            suma_temporal = suma_temporal * 10 + int(caracter)
+        else:
+            if suma_temporal > 0:
+                resultado += str(suma_temporal)
+                suma_temporal = 0
+            resultado += caracter
+
+    if suma_temporal > 0:
+        resultado += str(suma_temporal)
+
+    resultado = resultado.replace('1', '')  # Eliminamos todos los dígitos '1' restantes
+
+    return resultado
 
 
 
