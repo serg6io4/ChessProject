@@ -152,7 +152,7 @@ def coordenadas_txt(coordenadas, ruta):
 
 #Cargamos la ruta de la imagen y se la pasamos a procesar
 ruta_carpeta = "C:\\Users\\sergi\\Desktop\\ProyectoChess\\transform_images\\dataset\\"
-ruta_imagen = "playchess-0003"
+ruta_imagen = "fideonlinearena-0002"
 
 #Obtengo la imagen del marco de seleccion, las coordenadas de ese marco y la matrix que se ha aplicado
 imagen_selec, coordenadas_originales, matrix= procesar_imagen(ruta_carpeta + ruta_imagen + ".png")
@@ -170,10 +170,12 @@ if(imagen_pre is not None):
     """
     cv2.imshow("Previsualizacion", imagen_pre)
     cv2.waitKey(0)
-    #Esto es para que la imagen sea cuadrada exacta y se lo paso
+    #Con esto tipifico la imagen a cuadrada, nítida y sin brillo en exceso
     imagen_pre = cv2.resize(imagen_pre, (600,600))
+    imagen_pre = cv2.filter2D(imagen_pre, -1, np.array([[-1, -1, -1], [-1, 1.5 + 8, -1], [-1, -1, -1]]))
+    imagen_pre = cv2.convertScaleAbs(imagen_pre, alpha=0.7, beta=0)
     #Cargo el modelo dentro de una variable
-    ruta_modelo = "C:\\Users\\sergi\\Desktop\\ProyectoChess\\AI\\modelo\\mobilenetv2_chess_classification1.pt"
+    ruta_modelo = "C:\\Users\\sergi\\Desktop\\ProyectoChess\\AI\\modelo\\mobilenetv2_chess_classification.pt"
     modelo = cargar_modelo(ruta_modelo)
 
     # LLamo a la función recortar para recortar el tablero y escribirlo en notación FEN
