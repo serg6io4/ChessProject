@@ -2,6 +2,8 @@ import torch
 import torchvision.models as models
 from torchvision import transforms
 from PIL import Image
+import cv2
+import numpy as np
 
 def cargar_modelo(ruta_modelo):
     # Cargar el modelo previamente entrenado
@@ -93,7 +95,7 @@ def recortar(imagen, modelo):
 
     :param imagen: Imagen del tablero de ajedrez
     :param modelo: Modelo cargado previamente
-    :return: Lista de FEN (Notación de Álgebra de Notación) representando las casillas del tablero
+    :return: Lista de FEN representando las casillas del tablero
     """
     # Obtener las dimensiones de la imagen
     ancho, alto = imagen.shape[:2]
@@ -105,6 +107,8 @@ def recortar(imagen, modelo):
     tamaño_casilla_x = int(tamaño_casilla_x)
     tamaño_casilla_y = int(tamaño_casilla_y)
 
+    kernel = np.array([[-1, -1, -1], [-1, 1.5 + 8, -1], [-1, -1, -1]])
+    
     fenNotation = ""  # Lista para almacenar las notaciones FEN
 
     for fila in range(8):
@@ -117,8 +121,12 @@ def recortar(imagen, modelo):
 
             # Aquí recorto la casilla del punto actual
             casilla = imagen[y1:y2, x1:x2]
+            #cv2.imshow("casilla",casilla)
+            #cv2.waitKey(0)
+            casilla = cv2.filter2D(casilla, -1, kernel)
+            casilla = cv2.convertScaleAbs(casilla, alpha=0.7, beta=0)
             clase_predicha = predecir(casilla, modelo)
-
+            #print(clase_predicha)
             # Agrego la clase predicha (notación FEN) a la lista de FEN
             fenNotation = fenNotation + clase_predicha
 
