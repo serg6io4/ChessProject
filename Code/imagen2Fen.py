@@ -152,37 +152,68 @@ def coordenadas_txt(coordenadas, ruta):
 
 #Cargamos la ruta de la imagen y se la pasamos a procesar
 ruta_carpeta = "C:\\Users\\sergi\\Desktop\\ProyectoChess\\transform_images\\dataset\\"
-ruta_imagen = "chess-0001"
+ruta_imagen = "chess24-0001"
 
+print("1-Obtenemos la sección de imagen a detectar")
 #Obtengo la imagen del marco de seleccion, las coordenadas de ese marco y la matrix que se ha aplicado
 imagen_selec, coordenadas_originales, matrix= procesar_imagen(ruta_carpeta + ruta_imagen + ".png")
-#Lo hago para obtener las medidas, se necesitarán para destransformar la perspectiva inicial
-imagen_original = cv2.imread(ruta_carpeta + ruta_imagen + ".png")
-alto, ancho = imagen_original.shape[:2]
+"""
+1.Está comentado debido a que se utilizó para el testeo del algoritmo de detección
+    #Lo hago para obtener las medidas, se necesitarán para destransformar la perspectiva inicial
+    #imagen_original = cv2.imread(ruta_carpeta + ruta_imagen + ".png")
+    #alto, ancho = imagen_original.shape[:2]
+"""
+
 #Recorto la imagen seleccionada
+print("2-Procediendo a mostrar el proceso de detección")
 imagen_pre, coordenadas_puntos= recortar_pre(imagen_selec)
+
 if(imagen_pre is not None):
     """
-    Está comentado debido a que se utilizó para el testeo del algoritmo de detección
-    #Se le tiene que pasar las coordenadas obtenidas, el alto y el ancho de la imagen original y la matrix de transformacion
-    coordenadas_reales = calcular_coordenadas_finales(coordenadas_puntos,alto, ancho, matrix)
-    coordenadas_txt(coordenadas_reales, (ruta_carpeta + ruta_imagen))
+    2.Está comentado debido a que se utilizó para el testeo del algoritmo de detección
+        #Se le tiene que pasar las coordenadas obtenidas, el alto y el ancho de la imagen original y la matrix de transformacion
+        #coordenadas_reales = calcular_coordenadas_finales(coordenadas_puntos,alto, ancho, matrix)
+        #coordenadas_txt(coordenadas_reales, (ruta_carpeta + ruta_imagen))
     """
-    cv2.imshow("Previsualizacion", imagen_pre)
+    print("3-Mostrando el tablero detectado")
+    cv2.imshow("Visualizando tablero", imagen_pre)
     cv2.waitKey(0)
     #Con esto tipifico la imagen a tamaño estándar
+    print("4-Redimensionando el tablero a cuadrado perfecto")
     imagen_pre = cv2.resize(imagen_pre, (600,600))
+
     #Cargo el modelo dentro de una variable
+    print("5-Cargando el modelo para predecir piezas")
     ruta_modelo = "C:\\Users\\sergi\\Desktop\\ProyectoChess\\AI\\modelo\\mobilenetv2_chess_classification.pt"
     modelo = cargar_modelo(ruta_modelo)
 
+    print("6-Realizando tipificación del código al código FEN")
     # LLamo a la función recortar para recortar el tablero y escribirlo en notación FEN
     fenNotation = recortar(imagen_pre, modelo)
     #La devuelvo por pantalla
+    print("FEN NOTATION:")
     print(fenNotation)
 
 
 else:
-    #Imagen nula, error
-    print("Vuelva a intentarlo, ha ocurrido un error en la deteccion del tablero")
+    print("Como no se ha podido detectar semiautomáticamente, vamos a probar lo siguiente...")
+    #Imagen ha sido nula, en la detección semiautomática y ahora procedemos a darle el tablero exacto
+    print("1-Seleccione exactamente las esquinas del tablero:")
+    imagen_selec1, coordenadas_ord, matrix= procesar_imagen(ruta_carpeta + ruta_imagen + ".png")
+    cv2.imshow("Visualizando tablero", imagen_selec1)
+    cv2.waitKey(0)
 
+    print("2-Redimensionando el tablero a cuadrado perfecto")
+    imagen_selec1 = cv2.resize(imagen_selec1, (600,600))
+
+    #Cargo el modelo dentro de una variable
+    print("3-Cargando el modelo para predecir piezas")
+    ruta_modelo = "C:\\Users\\sergi\\Desktop\\ProyectoChess\\AI\\modelo\\mobilenetv2_chess_classification.pt"
+    modelo = cargar_modelo(ruta_modelo)
+    
+    print("4-Realizando tipificación del código al código FEN")
+    # LLamo a la función recortar para recortar el tablero y escribirlo en notación FEN
+    fenNotation = recortar(imagen_selec1, modelo)
+    #La devuelvo por pantalla
+    print("FEN NOTATION:")
+    print(fenNotation)
