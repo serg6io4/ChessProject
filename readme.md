@@ -50,13 +50,13 @@ My model achieves the following performance:
 | mobilenetv2_chess_classification   |        98,22%     |         98,92%      |     0,0548   |      0,0302    |
 
 >📋Confusion Matrix
-![ConfusionMatrix](Graphs\Confusion_Matrix_4.png)
+![ConfusionMatrix](Graphs/Confusion_Matrix_4.png)
 
 >📋Training and validation loss
-![Training&validationloss](Graphs\entrenamiento_y_validacion_perdida_4.png)
+![Training&validationloss](Graphs/entrenamiento_y_validacion_perdida_4.png)
 
 >📋Accuracy
-![Accuracy](Graphs\Precision(entrenamiento_validacion)_4.png)
+![Accuracy](Graphs/Precision(entrenamiento_validacion)_4.png)
 
 >📋Training results
-![Results](Graphs\Training_results.jpg)
+![Results](Graphs/Training_results.jpg)
