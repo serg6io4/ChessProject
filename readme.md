@@ -25,17 +25,31 @@ python "path/image2Fen.py" "yourimagename.png"
 ## Performance
 >📋Now we are going to see a tutorial:
 >📋First, you have to go to the command prompt and use the line of run project(with your own paths):
+
 ![First_step](docs/Tutorial/1.jpg)
+
 >📋Inmediatly, you will see the image that you want to obtain the ID:
+
 ![Second_step](docs/Tutorial/2.jpg)
+
 >📋Now, you have to select the four points near to the chess table in the image:
+
 ![Third_step](docs/Tutorial/3.jpg)
+
 >📋The program show the intersections and the point to find the corners:
+
 ![Fourth_step](docs/Tutorial/4.jpg)
+
 >📋And you wil see the chess table cropped up:
+
 ![Fifth_step](docs/Tutorial/5.jpg)
+
 >📋Finally in the command prompt, you will see the steps and in the last line, it shows the Fen notation of the chess table of the image:
+
 ![Result](docs/Tutorial/6.jpg)
+
+>📋If it does not work for your image, the program will let you crop the image for corners of the chess table and you will have the Fen Notation in the same way.
+
 
 ## Training
 
@@ -46,6 +60,7 @@ python train.py "path_to_data_directory" "path_to_save_directory"
 ```
 >📋You have to run this command line. There are two arguments, the first is the directory of your main folder of data, and the second argument is the directory to save the model.
 
+
 ## Evaluation
 
 To train and evaluate the model(with your own data), you have to use the next command line:
@@ -54,6 +69,7 @@ To train and evaluate the model(with your own data), you have to use the next co
 python eval.py "path_to_data_directory" "path_to_save_directory"
 ```
 >📋This command line execute the training and evaluation of the classifier that will create with your own data, and show graphs like confusion matrix, accuracy and training and validation loss for epoch.
+
 
 ## Results 
 
