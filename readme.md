@@ -50,13 +50,13 @@ My model achieves the following performance:
 | mobilenetv2_chess_classification   |        98,22%     |         98,92%      |     0,0548   |      0,0302    |
 
 >📋Confusion Matrix
-![Image text](https://github.com/serg6io4/ChessProject/tree/main/Graphs/Confusion_Matrix_4.png)
+![](Graphs\Confusion_Matrix_4.png)
 
 >📋Training and validation loss
-![Image text](https://github.com/serg6io4/ChessProject/tree/main/Graphs/entrenamiento_y_validacion_perdida_4.png)
+![](Graphs\entrenamiento_y_validacion_perdida_4.png)
 
 >📋Accuracy
-![Image text](https://github.com/serg6io4/ChessProject/tree/main/Graphs/Precision(entrenamiento_validacion)_4.png)
+![](Graphs\Precision(entrenamiento_validacion)_4.png)
 
 >📋Training results
-![Image text](https://github.com/serg6io4/ChessProject/tree/main/Graphs/Training_results.jpg)
+![](Graphs\Training_results.jpg)
