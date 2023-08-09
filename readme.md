@@ -47,4 +47,4 @@ My model achieves the following performance:
 
 | Model name                         | Accuracy        | Training and validation loss |
 |------------------------------------|-----------------|------------------------------|
-| mobilenetv2_chess_classification   |     98%         |   0,0548      0,0302         |
+| mobilenetv2_chess_classification   |     98%         |   0,0548    |   0,0302       |
