@@ -1,22 +1,25 @@
 import os
+import shutil
 import subprocess
-import urllib.request
-import tarfile
+from git import Repo
 
 def main():
-    repo_url = "https://github.com/serg6io4/ChessProject/archive/refs/heads/main.tar.gz"
-    project_folder = "ChessProject-main"  # Nombre de la carpeta del proyecto una vez extraído
+    repo_url = "https://github.com/serg6io4/ChessProject.git"
+    project_folder = "ChessProject"  # Cambia esto si deseas un nombre diferente para la carpeta del proyecto
 
-    # Descarga y extrae el repositorio de GitHub
-    urllib.request.urlretrieve(repo_url, "project.tar.gz")
-    with tarfile.open("project.tar.gz", "r:gz") as tar:
-        tar.extractall()
+    # Clona el repositorio de GitHub
+    Repo.clone_from(repo_url, project_folder)
 
     # Cambia al directorio del proyecto
     os.chdir(project_folder)
 
     # Instala las dependencias
     subprocess.call(["pip", "install", "-r", "requirements.txt"])
+
+    # Crea la estructura de directorios si no existe
+    data_folder = "data"
+    if not os.path.exists(data_folder):
+        os.makedirs(data_folder)
 
     print("Proyecto descargado y configurado.")
 
