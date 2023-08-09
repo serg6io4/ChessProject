@@ -1,4 +1,5 @@
 import os
+import argparse
 import torch
 import torchvision.models as models
 import torch.optim as optim
@@ -58,47 +59,39 @@ def load_model():
     model.classifier[1] = torch.nn.Linear(in_features, 13)
     return model
 
-if __name__ == "__main__":
-
-    #Para permitir la ejecución paralela(windows y python)
-    torch.multiprocessing.freeze_support()
-    #Cargar el modelo
-    model = load_model()
-    #Utilizar la tarjeta gráfica en caso de tenerla y aplicarlo al modelo
+def main(data_dir, save_dir):
+    # Utilizar la GPU si está disponible
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    
+    # Cargar el modelo
+    model = load_model()
     model.to(device)
-    #Definimos la función de pérdida y el optimizador
+    
+    # Definir función de pérdida y optimizador
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-
-    #Aquí se define una secuencia de transformaciones que se aplicarán a las imágenes antes de alimentarlas 
-    #al modelo durante el entrenamiento. Las transformaciones incluyen:
-        #Redimensionar las imágenes a un tamaño de 224x224 píxeles(MobileNetv2 fue entrenada con ese formato).
-        #Convertir las imágenes a escala de grises con 3 canales de salida(RGB).
-        #Convertir las imágenes en tensores.
-        #Normalizar los valores de píxeles de acuerdo con las estadísticas de normalización estándar utilizadas en la red MobileNetV2.
+    # Definir transformaciones de las imágenes
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
         Grayscale(num_output_channels=3),
         transforms.ToTensor(),
         transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
     ])
-    #Donde se almacenan las imagenes(dataset)
-    data_root = 'AI\data'
-    classes = os.listdir(data_root)
-    #Variables para las rutas de las imágenes y para las etiquetas de las clases
+    
+    # Donde se almacenan las imagenes (dataset)
+    classes = os.listdir(data_dir)
     all_image_paths = []
     labels = []
 
-    #Cargar rutas de archivos de imágenes y sus etiquetas correspondientes, organizados por clases.
+    # Cargar rutas de archivos de imágenes y sus etiquetas correspondientes, organizados por clases.
     for class_name in classes:
-        class_path = os.path.join(data_root, class_name)
+        class_path = os.path.join(data_dir, class_name)
         image_paths = [os.path.join(class_path, img) for img in os.listdir(class_path)]
         all_image_paths.extend(image_paths)
         labels.extend([classes.index(class_name)] * len(image_paths))
 
-    #División de los datasets(entrenamiento, validación y test)
+    # División de los datasets (entrenamiento, validación y test)
     train_image_paths, remaining_image_paths, train_labels, remaining_labels = train_test_split(
         all_image_paths, labels, test_size=0.2, random_state=42
     )
@@ -114,15 +107,14 @@ if __name__ == "__main__":
     valid_loader = DataLoader(valid_dataset, batch_size=32, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
-    #Número de épocas de entrenamiento y validación
     num_epochs = 10
-
     train_losses = []
     valid_losses = []
     train_accuracies = []
     valid_accuracies = []
-    #Modo de entrenamiento
+
     for epoch in range(num_epochs):
+        # Modo de entrenamiento
         model.train()
         train_loss = 0.0
         correct_train = 0
@@ -139,13 +131,13 @@ if __name__ == "__main__":
             _, predicted_train = torch.max(outputs.data, 1)
             total_train += labels.size(0)
             correct_train += (predicted_train == labels).sum().item()
-        #Cálculo de métricas de entrenamiento
+        # Cálculo de métricas de entrenamiento
         train_loss /= len(train_loader.dataset)
         train_accuracy = 100 * correct_train / total_train
         train_losses.append(train_loss)
         train_accuracies.append(train_accuracy)
 
-        #Modo de evaluación (validación)
+        # Modo de evaluación (validación)
         model.eval()
         valid_loss = 0.0
         correct_valid = 0
@@ -161,20 +153,20 @@ if __name__ == "__main__":
                 total_valid += labels.size(0)
                 correct_valid += (predicted_valid == labels).sum().item()
 
-        #Cálculo de métricas de validación
+        # Cálculo de métricas de validación
         valid_loss /= len(valid_loader.dataset)
         valid_accuracy = 100 * correct_valid / total_valid
         valid_losses.append(valid_loss)
         valid_accuracies.append(valid_accuracy)
-        #Impresión de resultados
+        # Impresión de resultados
         print(f'Epoch [{epoch + 1}/{num_epochs}], Train Loss: {train_loss:.4f}, Valid Loss: {valid_loss:.4f}, Train Accuracy: {train_accuracy:.2f}%, Valid Accuracy: {valid_accuracy:.2f}%')
 
-    #Para guardar el modelo
-    ruta_concreta = "AI\modelo\mobilenetv2_chess_classification.pt"
-    os.makedirs(os.path.dirname(ruta_concreta), exist_ok=True)
-    torch.save(model.state_dict(), ruta_concreta)
+    # Para guardar el modelo
+    model_filename = os.path.join(save_dir, "modelo_mobilenetv2.pt")
+    os.makedirs(os.path.dirname(model_filename), exist_ok=True)
+    torch.save(model.state_dict(), model_filename)
 
-    #Para relizar la matrix de confusion con los datos del testeo
+    # Para realizar la matriz de confusión con los datos del testeo
     model.eval()
     y_true = []
     y_pred = []
@@ -188,14 +180,15 @@ if __name__ == "__main__":
 
     cm = confusion_matrix(y_true, y_pred)
 
-    #Imprimir el gráfico de la matriz de confusion
+    # Gráfico de matriz de confusión
     plt.figure(figsize=(10, 8))
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=classes, yticklabels=classes)
     plt.xlabel('Predicted Labels')
     plt.ylabel('True Labels')
     plt.title('Confusion Matrix (Test Set)')
     plt.show()
-    #Imprimir la gráfica de pérdida de entrenamiento y validación
+
+    # Gráficos de pérdida y precisión
     plt.figure(figsize=(10, 6))
     plt.plot(range(1, num_epochs + 1), train_losses, label='Train Loss')
     plt.plot(range(1, num_epochs + 1), valid_losses, label='Valid Loss')
@@ -204,7 +197,7 @@ if __name__ == "__main__":
     plt.legend()
     plt.title('Training and Validation Loss')
     plt.show()
-    #Imprimir la gráfica de precisión de entrenamiento y validación
+
     plt.figure(figsize=(10, 6))
     plt.plot(range(1, num_epochs + 1), train_accuracies, label='Train Accuracy')
     plt.plot(range(1, num_epochs + 1), valid_accuracies, label='Valid Accuracy')
@@ -214,3 +207,10 @@ if __name__ == "__main__":
     plt.title('Training and Validation Accuracy')
     plt.show()
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Train and evaluate your model.")
+    parser.add_argument("data_dir", help="Path to the data directory")
+    parser.add_argument("save_dir", help="Path to the directory for saving the model")
+    args = parser.parse_args()
+
+    main(args.data_dir, args.save_dir)

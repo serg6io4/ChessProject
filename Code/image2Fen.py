@@ -1,3 +1,4 @@
+import argparse
 import cv2
 import numpy as np
 from detectline import recortar_pre
@@ -149,14 +150,22 @@ def coordenadas_txt(coordenadas, ruta):
 ##################################
 #    Realización del programa    #
 ##################################
+# Crear un analizador de argumentos
+parser = argparse.ArgumentParser(description='Procesamiento de imágenes y detección de piezas de ajedrez')
+
+# Agregar un argumento para la ruta de la imagen
+parser.add_argument('imagen', type=str, help='Ruta de la imagen a procesar')
+
+# Analizar los argumentos de línea de comandos
+args = parser.parse_args()
 
 #Cargamos la ruta de la imagen y se la pasamos a procesar
-ruta_carpeta = "C:\\Users\\sergi\\Desktop\\ProyectoChess\\transform_images\\dataset\\"
-ruta_imagen = "chess24-0001"
+ruta_carpeta = "transform_images\dataset"
+ruta_imagen = "\\" + args.imagen
 
 print("1-Obtenemos la sección de imagen a detectar")
 #Obtengo la imagen del marco de seleccion, las coordenadas de ese marco y la matrix que se ha aplicado
-imagen_selec, coordenadas_originales, matrix= procesar_imagen(ruta_carpeta + ruta_imagen + ".png")
+imagen_selec, coordenadas_originales, matrix= procesar_imagen(ruta_carpeta+ ruta_imagen)
 """
 1.Está comentado debido a que se utilizó para el testeo del algoritmo de detección
     #Lo hago para obtener las medidas, se necesitarán para destransformar la perspectiva inicial
@@ -184,7 +193,7 @@ if(imagen_pre is not None):
 
     #Cargo el modelo dentro de una variable
     print("5-Cargando el modelo para predecir piezas")
-    ruta_modelo = "C:\\Users\\sergi\\Desktop\\ProyectoChess\\AI\\modelo\\mobilenetv2_chess_classification.pt"
+    ruta_modelo = "AI\modelo\mobilenetv2_chess_classification.pt"
     modelo = cargar_modelo(ruta_modelo)
 
     print("6-Realizando tipificación del código al código FEN")
@@ -193,7 +202,7 @@ if(imagen_pre is not None):
     #La devuelvo por pantalla
     print("FEN NOTATION:")
     print(fenNotation)
-
+    cv2.destroyAllWindows()
 
 else:
     print("Como no se ha podido detectar semiautomáticamente, vamos a probar lo siguiente...")
@@ -208,7 +217,7 @@ else:
 
     #Cargo el modelo dentro de una variable
     print("3-Cargando el modelo para predecir piezas")
-    ruta_modelo = "C:\\Users\\sergi\\Desktop\\ProyectoChess\\AI\\modelo\\mobilenetv2_chess_classification.pt"
+    ruta_modelo = "AI\modelo\mobilenetv2_chess_classification.pt"
     modelo = cargar_modelo(ruta_modelo)
     
     print("4-Realizando tipificación del código al código FEN")
@@ -217,3 +226,4 @@ else:
     #La devuelvo por pantalla
     print("FEN NOTATION:")
     print(fenNotation)
+    cv2.destroyAllWindows()
