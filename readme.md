@@ -21,7 +21,7 @@ pip install -r requirements.txt
 ```setup
 python image2Fen.py "yourimagename.png"
 ```
-python image2Fen.py "yourimagename.png"
+>📋Remember to introduce the image in the folder dataset, the image have to be escale at 600px first
 
 ## Training
 
@@ -45,6 +45,18 @@ python eval.py "path_to_data_directory" "path_to_save_directory"
 
 My model achieves the following performance:
 
-| Model name                         | Accuracy        | Training and validation loss |
-|------------------------------------|-----------------|------------------------------|
-| mobilenetv2_chess_classification   |     98%         |   0,0548    |   0,0302       |
+| Model name                         | Training accuracy | Validation accuracy | Training loss| validation loss|
+|------------------------------------|-------------------|---------------------|--------------|----------------|
+| mobilenetv2_chess_classification   |        98,22%     |         98,92%      |     0,0548   |      0,0302    |
+
+>📋Confusion Matrix
+![Image text](https://github.com/serg6io4/ChessProject/tree/main/Graphs/Confusion_Matrix_4.png)
+
+>📋Training and validation loss
+![Image text](https://github.com/serg6io4/ChessProject/tree/main/Graphs/entrenamiento_y_validacion_perdida_4.png)
+
+>📋Accuracy
+![Image text](https://github.com/serg6io4/ChessProject/tree/main/Graphs/Precision(entrenamiento_validacion)_4.png)
+
+>📋Training results
+![Image text](https://github.com/serg6io4/ChessProject/tree/main/Graphs/Training_results.jpg)
