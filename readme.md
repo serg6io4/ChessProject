@@ -19,9 +19,23 @@ pip install -r requirements.txt
 
 4. Run the project(after introduce your image in the dataset):
 ```setup
-python image2Fen.py "yourimagename.png"
+python "path/image2Fen.py" "yourimagename.png"
 ```
 >📋Remember to introduce the image in the folder dataset, the image have to be escale at 600px first
+## Performance
+>📋Now we are going to see a tutorial:
+>📋First, you have to go to the command prompt and use the line of run project(with your own paths):
+![First_step](docs/Tutorial/1.jpg)
+>📋Inmediatly, you will see the image that you want to obtain the ID:
+![Second_step](docs/Tutorial/2.jpg)
+>📋Now, you have to select the four points near to the chess table in the image:
+![Third_step](docs/Tutorial/3.jpg)
+>📋The program show the intersections and the point to find the corners:
+![Fourth_step](docs/Tutorial/4.jpg)
+>📋And you wil see the chess table cropped up:
+![Fifth_step](docs/Tutorial/5.jpg)
+>📋Finally in the command prompt, you will see the steps and in the last line, it shows the Fen notation of the chess table of the image:
+![Result](docs/Tutorial/6.jpg)
 
 ## Training
 
@@ -50,13 +64,13 @@ My model achieves the following performance:
 | mobilenetv2_chess_classification   |        98,22%     |         98,92%      |     0,0548   |      0,0302    |
 
 >📋Confusion Matrix
-![ConfusionMatrix](Graphs/Confusion_Matrix_4.png)
+![ConfusionMatrix](docs/Graphs/Confusion_Matrix_4.png)
 
 >📋Training and validation loss
-![Training&validationloss](Graphs/entrenamiento_y_validacion_perdida_4.png)
+![Training&validationloss](docs/Graphs/entrenamiento_y_validacion_perdida_4.png)
 
 >📋Accuracy
-![Accuracy](Graphs/Precision(entrenamiento_validacion)_4.png)
+![Accuracy](docs/Graphs/Precision(entrenamiento_validacion)_4.png)
 
 >📋Training results
-![Results](Graphs/Training_results.jpg)
+![Results](docs/Graphs/Training_results.jpg)
