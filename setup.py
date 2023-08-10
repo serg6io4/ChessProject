@@ -1,10 +1,11 @@
 import os
+import argparse
 import subprocess
 from git import Repo
 
-def main():
+def main(args):
     repo_url = "https://github.com/serg6io4/ChessProject.git"
-    project_folder = "/ruta/completa/a/tu/directorio/ChessProject"  # Cambia esto a la ruta deseada
+    project_folder = args.ruta
 
     # Clona el repositorio de GitHub
     if not os.path.exists(project_folder):
@@ -21,4 +22,9 @@ def main():
     print("Proyecto descargado y configurado.")
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Clona un repositorio de GitHub y configura el proyecto.")
+    parser.add_argument("ruta", help="Ruta donde deseas clonar el repositorio y configurar el proyecto.")
+    args = parser.parse_args()
+    
+    main(args)
+

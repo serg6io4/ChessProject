@@ -22,6 +22,13 @@ pip install -r requirements.txt
 python "path/image2Fen.py" "yourimagename.png"
 ```
 >📋Remember to introduce the image in the folder dataset, the image have to be escale at 600px first
+
+## Other ways of installation
+
+>📋You can use download and execute setup.py, and this file will create the directories and the files in a especific path
+```setup
+python "path/setup.py" "path_save_directory/name_directory"
+```
 ## Performance
 >📋Now we are going to see a tutorial:
 >📋First, you have to go to the command prompt and use the line of run project(with your own paths):
