@@ -18,16 +18,17 @@ pip install -r requirements.txt
 ```
 
 4. Run the project(after introduce your image in the dataset):
-```setup
-python "path/image2Fen.py" "yourimagename.png"
+>📋It is important that you stay in the main folder of this project with your command prompt, this is an example:
+```important
+C:Users\...\ProyectoChess>python "path_to_file\image2Fen.py" "name_image"
 ```
->📋Remember to introduce the image in the folder dataset, the image have to be escale at 600px first
+>📋Another thing that is important: introduce your image in the dataset to use the program with the image
 
 ## Other ways of installation
 
 >📋You can use download and execute setup.py, and this file will create the directories and the files in a especific path
 ```setup
-python "path/setup.py" "path_save_directory/name_directory"
+python "path\setup.py" "path_save_directory\name_directory"
 ```
 >📋This will create the same diretory with all dependencies and requeriments(but not in a virtual enviorement)
 
