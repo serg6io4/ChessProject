@@ -167,28 +167,6 @@ def main(data_dir, save_dir):
     os.makedirs(os.path.dirname(ruta_concreta), exist_ok=True)
     torch.save(model.state_dict(), ruta_concreta)
 
-    #Para relizar la matrix de confusion con los datos del testeo
-    model.eval()
-    y_true = []
-    y_pred = []
-    with torch.no_grad():
-        for images, labels in test_loader:
-            images, labels = images.to(device), labels.to(device)
-            outputs = model(images)
-            _, predicted = torch.max(outputs.data, 1)
-            y_true.extend(labels.cpu().numpy())
-            y_pred.extend(predicted.cpu().numpy())
-
-    cm = confusion_matrix(y_true, y_pred)
-
-    # Gráfico de matriz de confusión
-    plt.figure(figsize=(10, 8))
-    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=classes, yticklabels=classes)
-    plt.xlabel('Etiquetas Predichas')
-    plt.ylabel('Etiquetas Reales')
-    plt.title('Matriz de Confusión (Conjunto de Pruebas)')
-    plt.show()
-
     # Gráficos de pérdida y precisión
     plt.figure(figsize=(10, 6))
     plt.plot(range(1, num_epochs + 1), train_losses, label='Pérdida en Entrenamiento')

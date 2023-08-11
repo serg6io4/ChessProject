@@ -29,9 +29,11 @@ python "path/image2Fen.py" "yourimagename.png"
 ```setup
 python "path/setup.py" "path_save_directory/name_directory"
 ```
+>📋This will create the same diretory with all dependencies and requeriments(but not in a virtual enviorement)
+
 ## Performance
 >📋Now we are going to see a tutorial:
->📋First, you have to go to the command prompt and use the line of run project(with your own paths):
+>📋First, you have to go to the command prompt(or the python console) and use the line of run project(with your own paths):
 
 ![First_step](docs/Tutorial/1.jpg)
 
@@ -63,24 +65,24 @@ python "path/setup.py" "path_save_directory/name_directory"
 To train the model(with your own data), you have to use the next command line:
 
 ```train
-python train.py "path_to_data_directory" "path_to_save_directory"
+python "path_to_train.py" "path_to_data_directory" "path_to_save_directory"
 ```
 >📋You have to run this command line. There are two arguments, the first is the directory of your main folder of data, and the second argument is the directory to save the model.
 
 
 ## Evaluation
 
-To train and evaluate the model(with your own data), you have to use the next command line:
+To evaluate the model(with your own data), you have to use the next command line:
 
 ```eval
-python eval.py "path_to_data_directory" "path_to_save_directory"
+python "path_to_eval.py" "path_to_model_directory" "path_to_data_directory"
 ```
->📋This command line execute the training and evaluation of the classifier that will create with your own data, and show graphs like confusion matrix, accuracy and training and validation loss for epoch.
+>📋This command line execute the evaluation of the classifier that was created with your own data, and show the confusion matrix.
 
 
 ## Results 
 
-My model achieves the following performance:
+My chess classifier achieves the following performance:
 
 | Model name                         | Training accuracy | Validation accuracy | Training loss| validation loss|
 |------------------------------------|-------------------|---------------------|--------------|----------------|
