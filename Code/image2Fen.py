@@ -147,9 +147,38 @@ def coordenadas_txt(coordenadas, ruta):
 
     print(f"Se han guardado las coordenadas en el archivo: {nombre_archivo}")
 
+from PIL import Image
+import io
+
+from PIL import Image
+import os
+
+from PIL import Image
+
+def resize_image(input_image_path, target_width):
+    """
+    Modifica el tamaño de una imagen, con un ancho dado y  altura automática, para poder ser utilizada por el programa 
+
+    :param:  ancho deseado, ruta de la imagen
+    """
+    # Abrir la imagen desde la ruta proporcionada
+    image = Image.open(input_image_path)
+
+    # Calcular la nueva altura proporcional manteniendo la relación de aspecto
+    aspect_ratio = image.width / image.height
+    target_height = int(target_width / aspect_ratio)
+
+    # Reescalar la imagen
+    resized_image = image.resize((target_width, target_height), Image.ANTIALIAS)
+
+    # Guardar la imagen reescalada en la misma ruta (reemplazando la original)
+    resized_image.save(input_image_path)
+
+
 ##################################
 #    Realización del programa    #
 ##################################
+
 # Crear un analizador de argumentos
 parser = argparse.ArgumentParser(description='Procesamiento de imágenes y detección de piezas de ajedrez')
 
@@ -162,6 +191,9 @@ args = parser.parse_args()
 #Cargamos la ruta de la imagen y se la pasamos a procesar
 ruta_carpeta = "transform_images\dataset"
 ruta_imagen = "\\" + args.imagen
+
+#Cambiamos el tamaño de la imagen(debido a que es necesario un tamaño visible en la consola)
+resize_image(ruta_carpeta+ruta_imagen, 600)
 
 print("1-Obtenemos la sección de imagen a detectar")
 #Obtengo la imagen del marco de seleccion, las coordenadas de ese marco y la matrix que se ha aplicado
@@ -208,7 +240,7 @@ else:
     print("Como no se ha podido detectar semiautomáticamente, vamos a probar lo siguiente...")
     #Imagen ha sido nula, en la detección semiautomática y ahora procedemos a darle el tablero exacto
     print("1-Seleccione exactamente las esquinas del tablero:")
-    imagen_selec1, coordenadas_ord, matrix= procesar_imagen(ruta_carpeta + ruta_imagen + ".png")
+    imagen_selec1, coordenadas_ord, matrix= procesar_imagen(ruta_carpeta + ruta_imagen)
     cv2.imshow("Visualizando tablero", imagen_selec1)
     cv2.waitKey(0)
 
