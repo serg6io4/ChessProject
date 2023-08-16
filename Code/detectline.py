@@ -76,8 +76,8 @@ def lineas(canny_image, original_image, rho=1, theta=np.pi/360, threshold=180):
     for punto in puntos_interseccion:
         cv2.circle(line_image, punto, 4, (255, 0, 0), -1)
         
-    print("   2.2.1-Mostrando las lineas y los puntos encontrados en la imagen")
-    cv2.imshow("Lineas y puntos de intersección", line_image)
+    print("   2.2.1-Showing the lines and the intersections in the image")
+    cv2.imshow("Visualizing lines and intersections", line_image)
     cv2.waitKey(0)
     return puntos_interseccion
 
@@ -122,7 +122,7 @@ def recuperar_punto(puntos, alto_imagen, ancho_imagen):
    
     if (len(puntos_validos))<=1:
         #Si faltan 3 puntos, no se puede hacer nada, porque no sería tan exacto realizar las operaciones
-        print("No hay puntos suficientes para recuperar el tablero")
+        print("Not enough points to rescue the chessboard")
     elif (len(puntos_validos))==2:
         #Si faltan 2 puntos hay 6 combinaciones posibles:
         # [(1,2),(1,3),(1,4),(2,3),(2,4),(3,4)]
@@ -170,19 +170,19 @@ def recortar_pre(imagen):
     """
 
     #Realizamos Canny para detección de bordes dentro de la imagen que nos pasan
-    print(" 2.1-Aplicamos detección de bordes por algoritmo Canny")
+    print(" 2.1-Applying edge detection by Canny algorithm")
     Canny = canny(imagen)
-    cv2.imshow("Detectando bordes", Canny)
+    cv2.imshow("Edges", Canny)
     cv2.waitKey(0)
     #Lo necesitaremos para recuperar las coordenadas que nos falten a posteriori de detectar los puntos
     alto_imagen, ancho_imagen = imagen.shape[:2]
     #Obtenemos los puntos
-    print(" 2.2-Detección de puntos por intersecciones de lineas detectadas por Hough")
+    print(" 2.2-Detection of points by intersections of lines detected by Hough")
     puntos = lineas(Canny,imagen)
     #Especificamos la zona a buscar
     cuadrado_tam=40
 
-    print(" 2.3-Buscamos los puntos más cercanos a la esquina del tablero")
+    print(" 2.3-Looking for the closest points to the corner of the board")
     #Buscamos en cada una delas zonas cercanas a las esquinas de la imagen
     punto1 = punto_esquina(0, 0, puntos, cuadrado_tam, cuadrado_tam)
     punto2 = punto_esquina(ancho_imagen - cuadrado_tam, 0, puntos, cuadrado_tam, cuadrado_tam)
@@ -200,10 +200,10 @@ def recortar_pre(imagen):
     if(len(n_puntos)<4):
         #Si no tenemos los puntos no podemos saber donde está la imagen
         imagen_n=None
-        print("ERROR: No se ha podido detectar los puntos del tablero")
+        print("ERROR: Failed detecting board points")
     else:
         #Cortamos la imagen
-        print(" 2.4-Hemos detectado correctamente los puntos")
+        print(" 2.4-All the points were detected")
         imagen_n = imagen[puntos[0][1]:puntos[3][1], puntos[0][0]:puntos[3][0]]
     
     return imagen_n, puntos

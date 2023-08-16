@@ -195,7 +195,8 @@ ruta_imagen = "\\" + args.imagen
 #Cambiamos el tamaño de la imagen(debido a que es necesario un tamaño visible en la consola)
 resize_image(ruta_carpeta+ruta_imagen, 600)
 
-print("1-Obtenemos la sección de imagen a detectar")
+print("1-Select the corners of the chessboard")
+print("Note:Click near the corners of the chessboard")
 #Obtengo la imagen del marco de seleccion, las coordenadas de ese marco y la matrix que se ha aplicado
 imagen_selec, coordenadas_originales, matrix= procesar_imagen(ruta_carpeta+ ruta_imagen)
 """
@@ -206,7 +207,7 @@ imagen_selec, coordenadas_originales, matrix= procesar_imagen(ruta_carpeta+ ruta
 """
 
 #Recorto la imagen seleccionada
-print("2-Procediendo a mostrar el proceso de detección")
+print("2-Showing the process of detection")
 imagen_pre, coordenadas_puntos= recortar_pre(imagen_selec)
 
 if(imagen_pre is not None):
@@ -216,19 +217,19 @@ if(imagen_pre is not None):
         #coordenadas_reales = calcular_coordenadas_finales(coordenadas_puntos,alto, ancho, matrix)
         #coordenadas_txt(coordenadas_reales, (ruta_carpeta + ruta_imagen))
     """
-    print("3-Mostrando el tablero detectado")
-    cv2.imshow("Visualizando tablero", imagen_pre)
+    print("3-Showing the detecting chessboard")
+    cv2.imshow("Visualizing chessboard", imagen_pre)
     cv2.waitKey(0)
     #Con esto tipifico la imagen a tamaño estándar
-    print("4-Redimensionando el tablero a cuadrado perfecto")
+    print("4-Resizing the board to perfect square")
     imagen_pre = cv2.resize(imagen_pre, (600,600))
 
     #Cargo el modelo dentro de una variable
-    print("5-Cargando el modelo para predecir piezas")
+    print("5-Loading the model to predict the chess pieces")
     ruta_modelo = "AI\modelo\mobilenetv2_chess_classification.pt"
     modelo = cargar_modelo(ruta_modelo)
 
-    print("6-Realizando tipificación del código al código FEN")
+    print("6-Typing to the FEN code")
     # LLamo a la función recortar para recortar el tablero y escribirlo en notación FEN
     fenNotation = recortar(imagen_pre, modelo)
     #La devuelvo por pantalla
@@ -237,22 +238,22 @@ if(imagen_pre is not None):
     cv2.destroyAllWindows()
 
 else:
-    print("Como no se ha podido detectar semiautomáticamente, vamos a probar lo siguiente...")
+    print("As it could not be detected semi-automatically, we are going to try the following...")
     #Imagen ha sido nula, en la detección semiautomática y ahora procedemos a darle el tablero exacto
-    print("1-Seleccione exactamente las esquinas del tablero:")
+    print("1-Select exactly the corners of the chessboard:")
     imagen_selec1, coordenadas_ord, matrix= procesar_imagen(ruta_carpeta + ruta_imagen)
-    cv2.imshow("Visualizando tablero", imagen_selec1)
+    cv2.imshow("Visualizing chessboard", imagen_selec1)
     cv2.waitKey(0)
 
-    print("2-Redimensionando el tablero a cuadrado perfecto")
+    print("2-Resizing the board to perfect square")
     imagen_selec1 = cv2.resize(imagen_selec1, (600,600))
 
     #Cargo el modelo dentro de una variable
-    print("3-Cargando el modelo para predecir piezas")
+    print("3-Loading the model to predict the chess pieces")
     ruta_modelo = "AI\modelo\mobilenetv2_chess_classification.pt"
     modelo = cargar_modelo(ruta_modelo)
     
-    print("4-Realizando tipificación del código al código FEN")
+    print("4-Typing to the FEN code")
     # LLamo a la función recortar para recortar el tablero y escribirlo en notación FEN
     fenNotation = recortar(imagen_selec1, modelo)
     #La devuelvo por pantalla
