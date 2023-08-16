@@ -169,7 +169,7 @@ def resize_image(input_image_path, target_width):
     target_height = int(target_width / aspect_ratio)
 
     # Reescalar la imagen
-    resized_image = image.resize((target_width, target_height), Image.ANTIALIAS)
+    resized_image = image.resize((target_width, target_height), Image.LANCZOS)
 
     # Guardar la imagen reescalada en la misma ruta (reemplazando la original)
     resized_image.save(input_image_path)

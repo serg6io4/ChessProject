@@ -31,7 +31,8 @@ def detectar_figuras(imagen, lineas):
     
     # Aplicar el algoritmo de detección de contornos
     contornos, _ = cv2.findContours(gris, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    
+    cv2.imshow("Mascara",mascara)
+    cv2.waitKey(0)
     return contornos
 #Simplemente vamos a iterar sobre los contornos detectados, recortarlos y mostrarlos
 def tablero_recortado(imagen, contornos):
@@ -52,4 +53,6 @@ def recortarTableros(imagen):
     cv2.imshow("Tablero",imagen_recortada)
     cv2.waitKey(0)
     return imagen_recortada
-    
+
+img = cv2.imread('transform_images\dataset\chess-0002-1690631790036.png') 
+recortarTableros(img)

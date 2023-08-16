@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # Cargar la imagen
-imagen = cv2.imread('C:\\Users\\sergi\\Desktop\\ProyectoChess\\Pictures\\tablero2.jpg')
+imagen = cv2.imread('transform_images\dataset\chess-0002.png')
 
 grises = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
 
