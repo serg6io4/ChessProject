@@ -1,5 +1,6 @@
 import argparse
 import cv2
+from PIL import Image
 import numpy as np
 from detectline import recortar_pre
 from predecir2version import cargar_modelo,recortar,predecir
@@ -146,14 +147,6 @@ def coordenadas_txt(coordenadas, ruta):
         archivo.write(coordenadas_str)
 
     print(f"Se han guardado las coordenadas en el archivo: {nombre_archivo}")
-
-from PIL import Image
-import io
-
-from PIL import Image
-import os
-
-from PIL import Image
 
 def resize_image(input_image_path, target_width):
     """

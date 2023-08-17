@@ -44,7 +44,7 @@ def aplicar_Transformacion(coordenadas, ancho, alto):
     return imagen_transformada
 
 # Esto es para cargar la imagen y hacerla de un tamaño menor para poder verla antes de aplicar los puntos
-imagen = cv2.imread('C:\\Users\\sergi\\Desktop\\ProyectoChess\\Pictures\\foto1.jpg')
+imagen = cv2.imread('transform_images\dataset\chess-0002-1690454248914-color.png')
 imagen = cv2.resize(imagen, (600, 600))
 
 cv2.namedWindow('Imagen')
