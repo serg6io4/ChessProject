@@ -11,6 +11,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from PIL import Image
 from torchvision.transforms import Grayscale
+from torchsummary import summary
 
 class CustomDataset(Dataset):
     """
@@ -56,6 +57,12 @@ def load_model():
     in_features = model.classifier[1].in_features
     #Aquí se modifica la última capa del clasificador
     model.classifier[1] = torch.nn.Linear(in_features, 13)
+    # Mueve el modelo y los datos de entrada a la GPU si está disponible
+    if torch.cuda.is_available():
+        model.cuda()
+
+    # Imprime un resumen de la arquitectura del modelo
+    summary(model, input_size=(3, 224, 224))
     return model
 
 if __name__ == "__main__":

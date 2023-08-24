@@ -159,160 +159,170 @@ def show_image(location, title, img, width=None):
 
 
 
-raw_image_path = "C:\\Users\\sergi\\Desktop\\transform_images\\dataset\\"
-raw_image_name = "lichess-0002"
+raw_image_path = "transform_images\dataset\\"
+raw_image_name = "playchess-0010"
+#"chess.com", "chessarena.com" ,"lichess.org", "play.chessbase.com"
+raw_image_platform = "play.chessbase.com"
  #Cargo el xlsx que es el excel
-wb = load_workbook('C:\\Users\\sergi\\Desktop\\ProyectoChess\\Test\\Testeo3.xlsx')
+wb = load_workbook('Test\Testeo.xlsx')
 ws = wb.active
 ws.title = 'Testeo'
 
-color_image = cv2.imread(raw_image_path + raw_image_name + ".png")
+for _ in range(50):
+  color_image = cv2.imread(raw_image_path + raw_image_name + ".png")
 
-height = color_image.shape[0]
-width = color_image.shape[1]
-
-
-# read corners of image patch
-with open(raw_image_path + raw_image_name + ".txt", 'r') as gt_f:
-    gt_array = gt_f.readlines()
-gt_array = [x.split() for x in gt_array]
-gt_array = np.array(gt_array).astype('int32')
-gt_array = np.array(gt_array).flatten().astype(np.int32)
-
-# define corners of image patch
-top_left_point     = (gt_array[0], gt_array[1])
-bottom_left_point  = (gt_array[2], gt_array[3])
-bottom_right_point = (gt_array[4], gt_array[5])
-top_right_point    = (gt_array[6], gt_array[7])
-
-four_points        = [top_left_point, bottom_left_point, bottom_right_point, top_right_point]
+  height = color_image.shape[0]
+  width = color_image.shape[1]
 
 
-found = False # we generate images until the generated image has the four points inside
-while not found:
-    perturbed_four_points = []
-    for point in four_points:
-      perturbed_point = (point[0] + random.randint(-rho, rho), point[1] + random.randint(-rho, rho))
-      perturbed_four_points.append(perturbed_point)
+  # read corners of image patch
+  with open(raw_image_path + raw_image_name + ".txt", 'r') as gt_f:
+      gt_array = gt_f.readlines()
+  gt_array = [x.split() for x in gt_array]
+  gt_array = np.array(gt_array).astype('int32')
+  gt_array = np.array(gt_array).flatten().astype(np.int32)
 
-    # compute Homography
-    H = cv2.getPerspectiveTransform(np.float32(four_points), np.float32(perturbed_four_points))
-    try:
-      H_inverse = inv(H)
-    except:
-      print("singular Error!")
-    inv_warped_color_image = numpy_transformer(color_image, H_inverse, (width,height))
+  # define corners of image patch
+  top_left_point     = (gt_array[0], gt_array[1])
+  bottom_left_point  = (gt_array[2], gt_array[3])
+  bottom_right_point = (gt_array[4], gt_array[5])
+  top_right_point    = (gt_array[6], gt_array[7])
 
-    # check if points are inside the generated image
-    # so that, coordinate points has to be 0 < pixel < width|height
-    points_I2 = cv2.perspectiveTransform(np.array([four_points],dtype=np.float32), H_inverse)
-    points_I2 = points_I2[0]
-    points_I2 = points_I2.astype(int)
-    print(points_I2)
-    coordinates_I2_outside = []
-    for point in points_I2:
-      point_outside = [0, 0]
-      if point[0]<0 or point[0]>width:
-        point_outside[0] = 1
-      if point[1]<0 or point[1]>height:
-        point_outside[1] = 1
-      coordinates_I2_outside.append(point_outside)
-    print(coordinates_I2_outside)
-    # Check if element 1 (coordinate outside of image) exists in the list
-    for sublist in coordinates_I2_outside:
-        if 1 in sublist: # print("Element exists"); generate other image
-            break
-    else: # print("Element does not exist"); we have found an image with points inside
-        found = True
-
-# show generated images
-top_left_point_I1 = np.array(four_points[0])
-top_left_point_I2 = cv2.perspectiveTransform(np.array([[top_left_point_I1]],dtype=np.float32), H_inverse)[0,0]
-
-patches_visualization = cv2.cvtColor(color_image, cv2.COLOR_BGR2RGB)
-cv2.circle(patches_visualization,tuple(top_left_point_I1), 20, (255,0,0), -1)
-show_image((2, 2, 1), "I1", patches_visualization)
-# visualize patch on warped image
-patch_warped_visualization = cv2.cvtColor(inv_warped_color_image, cv2.COLOR_BGR2RGB)
-cv2.circle(patch_warped_visualization, tuple(np.int32(top_left_point_I2)), 20, (255,0,0), -1)
-show_image((2, 2, 2), "I2", patch_warped_visualization)
-
-# warped white image
-white_img = np.zeros([height,width,3],dtype=np.uint8)
-white_img[:] = 255
-inv_warped_image_white = numpy_transformer(white_img, H_inverse, (width,height))
-I2_to_I1_white = numpy_transformer(inv_warped_image_white, H, (width,height))
-
-# warp image 2 back using inverse of (H_inverse)
-I2_to_I1 = numpy_transformer(inv_warped_color_image, H, (width,height))
-I2_to_I1 = cv2.cvtColor(I2_to_I1, cv2.COLOR_BGR2RGB)
-show_image((2, 2, 3), "I2 warped to I1", I2_to_I1)
-show_image((2, 2, 4), "I2 warped to I1 B&W", I2_to_I1_white)
-plt.show()
-
-# save warped image without noise
-now_time = int(time.time()*1000) #time in milliseconds
-image_path_name = raw_image_path + raw_image_name + "-" + str(now_time) + ".png"
-ws.append([raw_image_name + "-" + str(now_time) + ".png", raw_image_name])
-cv2.imwrite(image_path_name, inv_warped_color_image)
-
-# write warped image round truth
-f_gt = open(raw_image_path + raw_image_name + "-" + str(now_time) + ".txt", 'a')
-gt = np.subtract(np.array(perturbed_four_points), np.array(four_points)) # Ground truth is delta displacement
-gt = np.array(points_I2).flatten() #.astype(np.float32)
-np.savetxt(f_gt, [gt], fmt='%i',delimiter= ' ')
-f_gt.close()
+  four_points        = [top_left_point, bottom_left_point, bottom_right_point, top_right_point]
 
 
+  found = False # we generate images until the generated image has the four points inside
+  while not found:
+      perturbed_four_points = []
+      for point in four_points:
+        perturbed_point = (point[0] + random.randint(-rho, rho), point[1] + random.randint(-rho, rho))
+        perturbed_four_points.append(perturbed_point)
 
-# change image color
-# a pixel can have a value between 0 and 255
-min_val=0
-max_val=255
-# Randomly shift gamma
-random_gamma1 = tf.random.uniform([], 0.9, 1.1)
-img1_aug = inv_warped_color_image ** random_gamma1
+      # compute Homography
+      H = cv2.getPerspectiveTransform(np.float32(four_points), np.float32(perturbed_four_points))
+      try:
+        H_inverse = inv(H)
+      except:
+        print("singular Error!")
+      inv_warped_color_image = numpy_transformer(color_image, H_inverse, (width,height))
+
+      # check if points are inside the generated image
+      # so that, coordinate points has to be 0 < pixel < width|height
+      points_I2 = cv2.perspectiveTransform(np.array([four_points],dtype=np.float32), H_inverse)
+      points_I2 = points_I2[0]
+      points_I2 = points_I2.astype(int)
+      print(points_I2)
+      coordinates_I2_outside = []
+      for point in points_I2:
+        point_outside = [0, 0]
+        if point[0]<0 or point[0]>width:
+          point_outside[0] = 1
+        if point[1]<0 or point[1]>height:
+          point_outside[1] = 1
+        coordinates_I2_outside.append(point_outside)
+      print(coordinates_I2_outside)
+      # Check if element 1 (coordinate outside of image) exists in the list
+      for sublist in coordinates_I2_outside:
+          if 1 in sublist: # print("Element exists"); generate other image
+              break
+      else: # print("Element does not exist"); we have found an image with points inside
+          found = True
+
+  # show generated images
+  """
+  top_left_point_I1 = np.array(four_points[0])
+  top_left_point_I2 = cv2.perspectiveTransform(np.array([[top_left_point_I1]],dtype=np.float32), H_inverse)[0,0]
+
+  patches_visualization = cv2.cvtColor(color_image, cv2.COLOR_BGR2RGB)
+  cv2.circle(patches_visualization,tuple(top_left_point_I1), 20, (255,0,0), -1)
+  show_image((2, 2, 1), "I1", patches_visualization)
+  # visualize patch on warped image
+  patch_warped_visualization = cv2.cvtColor(inv_warped_color_image, cv2.COLOR_BGR2RGB)
+  cv2.circle(patch_warped_visualization, tuple(np.int32(top_left_point_I2)), 20, (255,0,0), -1)
+  show_image((2, 2, 2), "I2", patch_warped_visualization)
+
+  # warped white image
+  white_img = np.zeros([height,width,3],dtype=np.uint8)
+  white_img[:] = 255
+  inv_warped_image_white = numpy_transformer(white_img, H_inverse, (width,height))
+  I2_to_I1_white = numpy_transformer(inv_warped_image_white, H, (width,height))
+
+  # warp image 2 back using inverse of (H_inverse)
+  I2_to_I1 = numpy_transformer(inv_warped_color_image, H, (width,height))
+  I2_to_I1 = cv2.cvtColor(I2_to_I1, cv2.COLOR_BGR2RGB)
+  show_image((2, 2, 3), "I2 warped to I1", I2_to_I1)
+  show_image((2, 2, 4), "I2 warped to I1 B&W", I2_to_I1_white)
+  plt.show()
+  """
+
+
+  # save warped image without noise
+  now_time = int(time.time()*1000) #time in milliseconds
+  image_path_name = raw_image_path + raw_image_name + "-" + str(now_time) + ".png"
+  #ws.append([raw_image_name + "-" + str(now_time) + ".png", raw_image_platform, "S","None", "None","None","None", "None", "None"])
+  cv2.imwrite(image_path_name, inv_warped_color_image)
+
+  # write warped image round truth
+  f_gt = open(raw_image_path + raw_image_name + "-" + str(now_time) + ".txt", 'a')
+  gt = np.subtract(np.array(perturbed_four_points), np.array(four_points)) # Ground truth is delta displacement
+  gt = np.array(points_I2).flatten() #.astype(np.float32)
+  np.savetxt(f_gt, [gt], fmt='%i',delimiter= ' ')
+  f_gt.close()
 
 
 
-
-# Randomly shift brightness
-random_brightness1 = tf.random.uniform([], 0.75, 1.5)
-img1_aug = img1_aug * random_brightness1
-
-
-# Randomly shift color
-random_colors1 = tf.random.uniform([3], 0.9, 1.1)
-white = tf.ones([tf.shape(img1_aug)[0], tf.shape(img1_aug)[1]])
-color_image_t = tf.stack([white * random_colors1[i] for i in range(3)], axis=2)
-img1_aug *= color_image_t
+  # change image color
+  # a pixel can have a value between 0 and 255
+  min_val=0
+  max_val=255
+  # Randomly shift gamma
+  gamma_list = [0.9, 0.95, 1, 1.05, 1.1]
+  random_gamma1 = random.choice(gamma_list)
+  img1_aug = inv_warped_color_image ** random_gamma1
 
 
 
-# Saturate
-img1_aug = tf.clip_by_value(img1_aug, min_val, max_val)
 
-img1_aug = img1_aug.numpy()
-
-image_path_name = raw_image_path +  raw_image_name + "-" + str(now_time) + "-color.png"
-ws.append([raw_image_name + "-" + str(now_time) + "-color.png", raw_image_name, "S", random_gamma1.numpy(), random_brightness1.numpy(), random_colors1.numpy()[0],random_colors1.numpy()[1], random_colors1.numpy()[2], "None"])
-cv2.imwrite(image_path_name, img1_aug)
+  # Randomly shift brightness
+  brigthness_list = [0.7, 0.9, 1.1, 1.3, 1.5]
+  random_brightness1 = random.choice(brigthness_list)
+  img1_aug = img1_aug * random_brightness1
 
 
-# Adding Gaussian noise
-sigma = random.randint(0, 20) # sigma = [0..20]
-noise = np.random.normal(0, sigma, img1_aug.shape) # mu=0
-img_noise_array = img1_aug + noise
-img_noise_array = np.clip(img_noise_array, 0, 255)
-#img_noise = Image.fromarray(np.uint8(img_noise_array))
+  # Randomly shift color
+  color_list = [0.9, 0.95, 1, 1.05, 1.1]
+  random_colors1 = [random.choice(color_list), random.choice(color_list), random.choice(color_list)]
+  white = tf.ones([tf.shape(img1_aug)[0], tf.shape(img1_aug)[1]])
+  color_image_t = tf.stack([white * random_colors1[i] for i in range(3)], axis=2)
+  img1_aug *= color_image_t
 
 
-image_path_name = raw_image_path + raw_image_name + "-" + str(now_time) + "-colorgaussian.png"
-ws.append([raw_image_name + "-" + str(now_time) + "-colorgaussian.png", raw_image_name, "S", random_gamma1.numpy(), random_brightness1.numpy(),random_colors1.numpy()[0],random_colors1.numpy()[1], random_colors1.numpy()[2], sigma])
-cv2.imwrite( image_path_name, img_noise_array)
+
+  # Saturate
+  img1_aug = tf.clip_by_value(img1_aug, min_val, max_val)
+
+  img1_aug = img1_aug.numpy()
+
+  image_path_name = raw_image_path +  raw_image_name + "-" + str(now_time) + "-color.png"
+  #ws.append([raw_image_name + "-" + str(now_time) + "-color.png", raw_image_platform, "S", random_gamma1, random_brightness1, random_colors1[0],random_colors1[1], random_colors1[2], "None"])
+  cv2.imwrite(image_path_name, img1_aug)
+
+
+  # Adding Gaussian noise
+  sigma_list = [0, 5, 10, 15, 20]
+  sigma = random.choice(sigma_list) # sigma = [0..20]
+  noise = np.random.normal(0, sigma, img1_aug.shape) # mu=0
+  img_noise_array = img1_aug + noise
+  img_noise_array = np.clip(img_noise_array, 0, 255)
+  #img_noise = Image.fromarray(np.uint8(img_noise_array))
+
+
+  image_path_name = raw_image_path + raw_image_name + "-" + str(now_time) + "-colorgaussian.png"
+  ws.append([raw_image_name + "-" + str(now_time) + "-colorgaussian.png", raw_image_platform, "S", random_gamma1, random_brightness1,random_colors1[0],random_colors1[1], random_colors1[2], sigma])
+  cv2.imwrite( image_path_name, img_noise_array)
 
 #Guardo el trabajo
-wb.save('C:\\Users\\sergi\\Desktop\\ProyectoChess\\Test\\Testeo3.xlsx')
+wb.save('Test\Testeo.xlsx')
 
 
 

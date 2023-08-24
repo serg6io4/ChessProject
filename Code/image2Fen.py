@@ -186,31 +186,32 @@ ruta_carpeta = "transform_images\dataset"
 ruta_imagen = "\\" + args.imagen
 
 #Cambiamos el tamaño de la imagen(debido a que es necesario un tamaño visible en la consola)
-resize_image(ruta_carpeta+ruta_imagen, 600)
+#resize_image(ruta_carpeta+ruta_imagen+".png", 600)
 
-print("1-Select the corners of the chessboard")
-print("Note:Click near the corners of the chessboard")
+#print("1-Select the corners of the chessboard")
+#print("Note:Click near the corners of the chessboard")
 #Obtengo la imagen del marco de seleccion, las coordenadas de ese marco y la matrix que se ha aplicado
-imagen_selec, coordenadas_originales, matrix= procesar_imagen(ruta_carpeta+ ruta_imagen)
-"""
-1.Está comentado debido a que se utilizó para el testeo del algoritmo de detección
+imagen_selec, coordenadas_originales, matrix= procesar_imagen(ruta_carpeta + ruta_imagen + ".png")
+
+#Está comentado debido a que se utilizó para el testeo del algoritmo de detección
     #Lo hago para obtener las medidas, se necesitarán para destransformar la perspectiva inicial
-    #imagen_original = cv2.imread(ruta_carpeta + ruta_imagen + ".png")
-    #alto, ancho = imagen_original.shape[:2]
-"""
+imagen_original = cv2.imread(ruta_carpeta + ruta_imagen + ".png")
+alto, ancho = imagen_original.shape[:2]
+
 
 #Recorto la imagen seleccionada
-print("2-Showing the process of detection")
+#print("2-Showing the process of detection")
 imagen_pre, coordenadas_puntos= recortar_pre(imagen_selec)
 
 if(imagen_pre is not None):
+    
+    #Está comentado debido a que se utilizó para el testeo del algoritmo de detección
+    #Se le tiene que pasar las coordenadas obtenidas, el alto y el ancho de la imagen original y la matrix de transformacion
+    coordenadas_reales = calcular_coordenadas_finales(coordenadas_puntos,alto, ancho, matrix)
+    coordenadas_txt(coordenadas_reales, (ruta_carpeta + ruta_imagen))
+    
     """
-    2.Está comentado debido a que se utilizó para el testeo del algoritmo de detección
-        #Se le tiene que pasar las coordenadas obtenidas, el alto y el ancho de la imagen original y la matrix de transformacion
-        #coordenadas_reales = calcular_coordenadas_finales(coordenadas_puntos,alto, ancho, matrix)
-        #coordenadas_txt(coordenadas_reales, (ruta_carpeta + ruta_imagen))
-    """
-    print("3-Showing the detecting chessboard")
+     print("3-Showing the detecting chessboard")
     cv2.imshow("Visualizing chessboard", imagen_pre)
     cv2.waitKey(0)
     #Con esto tipifico la imagen a tamaño estándar
@@ -229,8 +230,10 @@ if(imagen_pre is not None):
     print("FEN NOTATION:")
     print(fenNotation)
     cv2.destroyAllWindows()
+    """
 
 else:
+    """
     print("As it could not be detected semi-automatically, we are going to try the following...")
     #Imagen ha sido nula, en la detección semiautomática y ahora procedemos a darle el tablero exacto
     print("1-Select exactly the corners of the chessboard:")
@@ -253,3 +256,6 @@ else:
     print("FEN NOTATION:")
     print(fenNotation)
     cv2.destroyAllWindows()
+
+    """
+    
