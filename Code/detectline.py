@@ -76,7 +76,7 @@ def lineas(canny_image, original_image, rho=1, theta=np.pi/360, threshold=180):
     for punto in puntos_interseccion:
         cv2.circle(line_image, punto, 4, (255, 0, 0), -1)
         
-    #print("   2.2.1-Showing the lines and the intersections in the image")
+    print("   2.2.1-Showing the lines and the intersections in the image")
     cv2.imshow("Visualizing lines and intersections", line_image)
     cv2.waitKey(0)
     return puntos_interseccion
@@ -172,17 +172,17 @@ def recortar_pre(imagen):
     #Realizamos Canny para detección de bordes dentro de la imagen que nos pasan
     #print(" 2.1-Applying edge detection by Canny algorithm")
     Canny = canny(imagen)
-    #cv2.imshow("Edges", Canny)
-    #cv2.waitKey(0)
+    cv2.imshow("Edges", Canny)
+    cv2.waitKey(0)
     #Lo necesitaremos para recuperar las coordenadas que nos falten a posteriori de detectar los puntos
     alto_imagen, ancho_imagen = imagen.shape[:2]
     #Obtenemos los puntos
-    #print(" 2.2-Detection of points by intersections of lines detected by Hough")
+    print(" 2.2-Detection of points by intersections of lines detected by Hough")
     puntos = lineas(Canny,imagen)
     #Especificamos la zona a buscar
     cuadrado_tam=40
 
-    #print(" 2.3-Looking for the closest points to the corner of the board")
+    print(" 2.3-Looking for the closest points to the corner of the board")
     #Buscamos en cada una delas zonas cercanas a las esquinas de la imagen
     punto1 = punto_esquina(0, 0, puntos, cuadrado_tam, cuadrado_tam)
     punto2 = punto_esquina(ancho_imagen - cuadrado_tam, 0, puntos, cuadrado_tam, cuadrado_tam)
@@ -203,7 +203,7 @@ def recortar_pre(imagen):
         print("ERROR: Failed detecting board points")
     else:
         #Cortamos la imagen
-        #print(" 2.4-All the points were detected")
+        print(" 2.4-All the points were detected")
         imagen_n = imagen[puntos[0][1]:puntos[3][1], puntos[0][0]:puntos[3][0]]
     
     return imagen_n, puntos
