@@ -35,8 +35,8 @@ def IOU(Poligono1, Poligono2):
     return iou
 
 # Parte de la fase de testeo
-ruta_entrada = "Test\salida.txt"
-ruta_salida = "Test\resultados_iou.txt"
+ruta_entrada = "Test/salida.txt"
+ruta_salida = "Test/resultados_IOU.txt"
 
 with open(ruta_entrada, 'r') as file:
     imagen_txt_files = [line.strip() for line in file]
@@ -49,7 +49,13 @@ for imagen in imagen_txt_files:
     
     if os.path.exists(ruta_prediccion):
         iou_result = IOU(poligono(ruta_original), poligono(ruta_prediccion))
-        resultados_iou.append(str(iou_result))
+        if iou_result is not None:
+            iou_result = round(iou_result, 2)
+            resultados_iou.append(f"{iou_result:.2f}")
+        else:
+            resultados_iou.append("None")
+    else:
+        resultados_iou.append("None")
 
 with open(ruta_salida, 'w') as output_file:
     output_file.write("\n".join(resultados_iou) + "\n")

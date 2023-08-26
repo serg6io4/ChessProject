@@ -238,7 +238,7 @@ else:
     print("As it could not be detected semi-automatically, we are going to try the following...")
     #Imagen ha sido nula, en la detección semiautomática y ahora procedemos a darle el tablero exacto
     print("1-Select exactly the corners of the chessboard:")
-    imagen_selec1, coordenadas_ord, matrix= procesar_imagen(ruta_carpeta + ruta_imagen)
+    imagen_selec1, coordenadas_ord, matrix= procesar_imagen(ruta_carpeta + ruta_imagen+ ".png")
     cv2.imshow("Visualizing chessboard", imagen_selec1)
     cv2.waitKey(0)
 
