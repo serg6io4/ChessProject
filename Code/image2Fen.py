@@ -186,12 +186,12 @@ ruta_carpeta = "transform_images\dataset"
 ruta_imagen = "\\" + args.imagen
 
 #Cambiamos el tamaño de la imagen(debido a que es necesario un tamaño visible en la consola)
-resize_image(ruta_carpeta+ruta_imagen+".png", 600)
+resize_image(ruta_carpeta+ruta_imagen, 600)
 
 print("1-Select the corners of the chessboard")
 print("Note:Click near the corners of the chessboard")
 #Obtengo la imagen del marco de seleccion, las coordenadas de ese marco y la matrix que se ha aplicado
-imagen_selec, coordenadas_originales, matrix= procesar_imagen(ruta_carpeta + ruta_imagen + ".png")
+imagen_selec, coordenadas_originales, matrix= procesar_imagen(ruta_carpeta + ruta_imagen)
 
 """
 #Está comentado debido a que se utilizó para el testeo del algoritmo de detección
@@ -238,7 +238,7 @@ else:
     print("As it could not be detected semi-automatically, we are going to try the following...")
     #Imagen ha sido nula, en la detección semiautomática y ahora procedemos a darle el tablero exacto
     print("1-Select exactly the corners of the chessboard:")
-    imagen_selec1, coordenadas_ord, matrix= procesar_imagen(ruta_carpeta + ruta_imagen+ ".png")
+    imagen_selec1, coordenadas_ord, matrix= procesar_imagen(ruta_carpeta + ruta_imagen)
     cv2.imshow("Visualizing chessboard", imagen_selec1)
     cv2.waitKey(0)
 
