@@ -5,11 +5,8 @@ import matplotlib.pyplot as plt
 excel_file = 'Test\Testeo.xlsx'  # Cambia esto a la ubicación real del archivo
 df = pd.read_excel(excel_file)
 
-# Calcular la media de los atributos de color
-df['Color'] = df[['ColorR', 'ColorG', 'ColorB']].mean(axis=1)
-
 # Atributos
-atributos = ['Gamma', 'Brillo', 'Sigma', 'Color']
+atributos = ['Gamma', 'Brillo', 'Sigma']
 
 # Iterar sobre los atributos y crear las gráficas de líneas por separado
 for atributo in atributos:
@@ -23,6 +20,22 @@ for atributo in atributos:
     plt.errorbar(x, y_mean, yerr=y_std, linestyle='-', marker='o', capsize=5)
     plt.title(f'Media de Tasa de Acierto vs {atributo}')
     plt.xlabel(atributo)
+    plt.ylabel('Media de Tasa de Acierto')
+    plt.tight_layout()
+    plt.show()
+
+# Crear gráficas separadas para cada componente de color (R, G, B)
+for color_component in ['ColorR', 'ColorG', 'ColorB']:
+    plt.figure(figsize=(10, 6))
+
+    grouped = df.groupby(color_component)['Tasa_acierto'].agg(['mean', 'std'])
+    x = grouped.index
+    y_mean = grouped['mean']
+    y_std = grouped['std']
+
+    plt.errorbar(x, y_mean, yerr=y_std, linestyle='-', marker='o', capsize=5)
+    plt.title(f'Media de Tasa de Acierto vs {color_component}')
+    plt.xlabel(color_component)
     plt.ylabel('Media de Tasa de Acierto')
     plt.tight_layout()
     plt.show()

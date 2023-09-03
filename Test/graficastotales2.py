@@ -1,48 +1,43 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 
-# Carga los datos desde el archivo Excel
-excel_file = "Test\Testeo.xlsx"
-data = pd.read_excel(excel_file)
+# Cargar el archivo Excel en un DataFrame
+excel_file = 'Test\Testeo.xlsx'  # Cambia esto a la ubicación real del archivo
+df = pd.read_excel(excel_file)
 
-# Asegurarse de que los valores de Tasa_acierto y Tasa_acierto1 estén en el rango [0, 1]
-data['Tasa_acierto'] = np.clip(data['Tasa_acierto'], 0, 1)
-data['Tasa_acierto1'] = np.clip(data['Tasa_acierto1'], 0, 1)
+# Crear una figura y ejes para la gráfica de Tasa de Acierto por Plataforma y R/S
+plt.figure(figsize=(12, 6))
 
-# Calcula la media y desviación estándar de la tasa de acierto por plataforma
-tasa_acierto_por_plataforma = data.groupby('Plataforma')['Tasa_acierto']
-media_tasa_acierto = tasa_acierto_por_plataforma.mean()
-desviacion_tasa_acierto = tasa_acierto_por_plataforma.std()
+# Ordenar los valores de R/S para tener "R" a la izquierda y "S" a la derecha
+df['R/S'] = pd.Categorical(df['R/S'], categories=["R", "S"], ordered=True)
 
-# Crear la primera gráfica: Media y Desviación Típica de Tasa de Acierto por Plataforma
-plt.figure(figsize=(8, 6))
-ax = media_tasa_acierto.plot(kind='bar', yerr=desviacion_tasa_acierto, capsize=4, color='skyblue')
+# Gráfica de Tasa de Acierto por Plataforma y R/S
+grouped_rs_platform = df.groupby(['Plataforma', 'R/S'])['Tasa_acierto1'].mean().unstack()
+grouped_rs_std_platform = df.groupby(['Plataforma', 'R/S'])['Tasa_acierto1'].std().unstack()
+
+grouped_rs_platform.plot(kind='bar', yerr=grouped_rs_std_platform, capsize=5, width=0.4)
+
+plt.title('Media de Tasa de Acierto y Desviación Estándar por Plataforma y R/S')
 plt.xlabel('Plataforma')
-plt.ylabel('Tasa de Acierto')
-plt.title('Media y Desviación Típica de Tasa de Acierto por Plataforma')
-plt.xticks(rotation=45)
-plt.grid(True)
+plt.ylabel('Media de Tasa de Acierto')
+plt.legend(title='R/S')
 plt.tight_layout()
-plt.ylim(0, 1)
-plt.yticks(np.linspace(0, 1, 11))
 plt.show()
 
-# Calcula la media y desviación estándar de la tasa de acierto1 por plataforma
-tasa_acierto1_por_plataforma = data.groupby('Plataforma')['Tasa_acierto1']
-media_tasa_acierto1 = tasa_acierto1_por_plataforma.mean()
-desviacion_tasa_acierto1 = tasa_acierto1_por_plataforma.std()
+# Crear una figura y ejes para la gráfica de Tasa de Acierto por Plataforma
+plt.figure(figsize=(10, 6))
 
-# Crear la segunda gráfica: Media y Desviación Típica de Tasa de Acierto1 por Plataforma
-plt.figure(figsize=(8, 6))
-ax = media_tasa_acierto1.plot(kind='bar', yerr=desviacion_tasa_acierto1, capsize=4, color='salmon')
+grouped_platform = df.groupby('Plataforma')['Tasa_acierto1'].mean()
+grouped_std_platform = df.groupby('Plataforma')['Tasa_acierto1'].std()
+
+x_platform = grouped_platform.index
+y_platform = grouped_platform.values
+y_std_platform = grouped_std_platform.values
+
+plt.bar(x_platform, y_platform, yerr=y_std_platform, capsize=5)
+
+plt.title('Media de Tasa de Acierto y Desviación Estándar por Plataforma')
 plt.xlabel('Plataforma')
-plt.ylabel('Tasa de Acierto1')
-plt.title('Media y Desviación Típica de Tasa de Acierto1 por Plataforma')
-plt.xticks(rotation=45)
-plt.grid(True)
+plt.ylabel('Media de Tasa de Acierto')
 plt.tight_layout()
-plt.ylim(0, 1)
-plt.yticks(np.linspace(0, 1, 11))
 plt.show()
-
