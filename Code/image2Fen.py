@@ -182,7 +182,7 @@ parser.add_argument('imagen', type=str, help='Ruta de la imagen a procesar')
 args = parser.parse_args()
 
 #Cargamos la ruta de la imagen y se la pasamos a procesar
-ruta_carpeta = "transform_images\dataset"
+ruta_carpeta = "transform_images\demo"
 ruta_imagen = "\\" + args.imagen
 
 #Cambiamos el tamaño de la imagen(debido a que es necesario un tamaño visible en la consola)
